@@ -103,5 +103,17 @@ namespace WASMFAQv2.Server.Repository
             qnaSet.QnAs.Add(qna);
             return await SaveChangesAsync();
         }
+        public async Task<bool> UpdateQnAAsync(QnA qna, int qnaId)
+        {
+            var existingQnA = await _context.QnAs
+                .FirstOrDefaultAsync(q => q.QnAId == qnaId);
+            if (existingQnA == null)
+            {
+                throw new Exception($"QnA with id {qna.QnAId} not found");
+            }
+            qna.QnAId = qnaId;
+            _context.Entry(existingQnA).CurrentValues.SetValues(qna);
+            return await SaveChangesAsync();
+        }
     }
 }

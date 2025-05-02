@@ -22,16 +22,19 @@ namespace WASMFAQv2.Client.Services
         public async Task<bool> AddQnASetAsync(QnASet qnaSet)
         {
             var response = await _httpClient.PostAsJsonAsync("api/faq/qnasets", qnaSet);
+            await SaveChanges();
             return response.IsSuccessStatusCode;
         }
         public async Task<bool> UpdateQnASetAsync(QnASet qnaSet)
         {
             var response = await _httpClient.PutAsJsonAsync("api/faq/qnasets", qnaSet);
+            await SaveChanges();
             return response.IsSuccessStatusCode;
         }
         public async Task<bool> DeleteQnASetAsync(int id)
         {
             var response = await _httpClient.DeleteAsync($"api/faq/qnasets/{id}");
+            await SaveChanges();
             return response.IsSuccessStatusCode;
         }
         public async Task<List<QnA>> GetQuestionsByQnASetIdAsync(int id)
@@ -41,11 +44,24 @@ namespace WASMFAQv2.Client.Services
         public async Task<bool> DeleteQnAAsync(int id)
         {
             var response = await _httpClient.DeleteAsync($"api/faq/qnasets/questions/{id}");
+            await SaveChanges();
             return response.IsSuccessStatusCode;
         }
         public async Task<bool> AddQnAAsync(QnA qna)
         {
-            var response = await _httpClient.PostAsJsonAsync("api/faq/qnasets/questions", qna);
+            var response = await _httpClient.PostAsJsonAsync($"api/faq/qnasets/{qna.QnAId}/questions", qna);
+            await SaveChanges();
+            return response.IsSuccessStatusCode;
+        }
+        public async Task<bool> SaveChanges()
+        {
+            var response = await _httpClient.PostAsync("api/faq/qnasets/savechanges", null);
+            return response.IsSuccessStatusCode;
+        }
+        public async Task<bool> UpdateQnAAsync(QnA qna, int qnaId)
+        {
+            var response = await _httpClient.PutAsJsonAsync($"api/faq/qnasets/questions/{qnaId}", qna);
+            await SaveChanges();
             return response.IsSuccessStatusCode;
         }
     }

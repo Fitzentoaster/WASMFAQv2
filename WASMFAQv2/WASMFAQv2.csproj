@@ -4,10 +4,12 @@
     <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+	<StaticWebAssetProjectMode>Consume</StaticWebAssetProjectMode>
+
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\WASMFAQ.Shared\WASMFAQ.Shared.csproj" />
+    <ProjectReference Include="..\WASMFAQ.Shared\WASMFAQv2.Shared.csproj" />
     <ProjectReference Include="..\WASMFAQv2.Client\WASMFAQv2.Client.csproj" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="9.0.4" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.4" />

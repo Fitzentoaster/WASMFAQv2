@@ -2,25 +2,28 @@
 
 @using WASMFAQv2.Shared.Interfaces
 
-@inject IFAQApiService FAQApiService
+@inject IServiceProvider ServiceProvider
 
 <PageTitle>Home</PageTitle>
-
-@if (qnaSets == null)
+@if (OperatingSystem.IsBrowser() == false)
 {
-<MudGrid Justify="Justify.Center">
-	<MudItem xs="12" sm="6">
-		<MudCard>
-			<MudCardHeader>
-				<MudText Typo="Typo.h5"><b>Loading...</b></MudText>
-			</MudCardHeader>
-		</MudCard>
-	</MudItem>
-</MudGrid>
+	<p>Still rendering on the server</p>
+}
+else if (qnaSets == null)
+{
+	<MudGrid Justify="Justify.Center">
+		<MudItem xs="12" sm="6">
+			<MudCard>
+				<MudCardHeader>
+					<MudText Typo="Typo.h5"><b>Loading...</b></MudText>
+				</MudCardHeader>
+			</MudCard>
+		</MudItem>
+	</MudGrid>
 }
 else
 {
-	<MudThemeProvider IsDarkMode="true"/>
+	<MudThemeProvider IsDarkMode="true" />
 	<MudGrid Justify="Justify.Center">
 		<MudItem xs="12" sm="6">
 			<MudCard>
@@ -66,21 +69,24 @@ else
 	</MudGrid>
 }
 @code {
-	private List<QnASet> qnaSets = new();
+	private IFAQApiService? FAQApiService;
+	private List<QnASet>? qnaSets;
+	private bool initialized;
 
-	protected async override Task OnInitializedAsync()
+	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
-		await InitializeQnASets();
-		await base.OnInitializedAsync();
-	}
-
-	private async Task InitializeQnASets()
-	{
-		qnaSets = await FAQApiService.GetQnASetsAsync();
-		foreach (var qnaSet in qnaSets)
+		if (firstRender && OperatingSystem.IsBrowser())
 		{
-			qnaSet.QnAs = await FAQApiService.GetQuestionsByQnASetIdAsync(qnaSet.QnASetId);
+			FAQApiService = ServiceProvider.GetRequiredService<IFAQApiService>();
+
+			qnaSets = await FAQApiService.GetQnASetsAsync();
+			foreach (var qnaSet in qnaSets)
+			{
+				qnaSet.QnAs = await FAQApiService.GetQuestionsByQnASetIdAsync(qnaSet.QnASetId);
+			}
+
+			initialized = true;
+			StateHasChanged(); 
 		}
 	}
-
 }

@@ -68,12 +68,11 @@ namespace WASMFAQv2.Server.Controllers
         }
 
         [HttpPost("qnasets/{id}/questions")]
-        public async Task<IActionResult> AddQnA(int id, [FromBody] QnA qna)
+        public async Task<IActionResult> AddQnA(QnA qna)
         {
-            qna.QnASetId = id;
             if (await _qnaSetRepository.AddQnAAsync(qna))
             {
-                return CreatedAtAction(nameof(GetQuestionsByQnASetId), new { id = qna.QnASetId }, qna);
+                return CreatedAtAction(nameof(GetQuestionsByQnASetId), new { id = qna.QnAId }, qna);
             }
             return BadRequest();
         }
@@ -86,6 +85,24 @@ namespace WASMFAQv2.Server.Controllers
                 return NoContent();
             }
             return NotFound();
+        }
+        [HttpPost("qnasets/savechanges")]
+        public async Task<IActionResult> SaveChanges()
+        {
+            if (await _qnaSetRepository.SaveChangesAsync())
+            {
+                return NoContent();
+            }
+            return BadRequest();
+        }
+        [HttpPut("qnasets/questions/{id}")]
+        public async Task<IActionResult> UpdateQnA(QnA qna, int id)
+        {
+            if (await _qnaSetRepository.UpdateQnAAsync(qna, id))
+            {
+                return NoContent();
+            }
+            return BadRequest();
         }
     }
 }

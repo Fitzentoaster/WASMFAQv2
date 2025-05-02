@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\WASMFAQ.Shared\WASMFAQ.Shared.csproj" />
+    <ProjectReference Include="..\WASMFAQ.Shared\WASMFAQv2.Shared.csproj" />
   </ItemGroup>
 
 </Project>

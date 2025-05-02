@@ -64,6 +64,7 @@ app.MapRazorComponents<App>()
     .AddAdditionalAssemblies(typeof(WASMFAQv2.Client._Imports).Assembly);
 
 app.MapControllers();
-app.MapStaticAssets();
+app.MapFallbackToFile("index.html");
+
 
 app.Run();
