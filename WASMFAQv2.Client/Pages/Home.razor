@@ -1,0 +1,86 @@
+﻿@page "/"
+
+@using WASMFAQv2.Shared.Interfaces
+
+@inject IFAQApiService FAQApiService
+
+<PageTitle>Home</PageTitle>
+
+@if (qnaSets == null)
+{
+<MudGrid Justify="Justify.Center">
+	<MudItem xs="12" sm="6">
+		<MudCard>
+			<MudCardHeader>
+				<MudText Typo="Typo.h5"><b>Loading...</b></MudText>
+			</MudCardHeader>
+		</MudCard>
+	</MudItem>
+</MudGrid>
+}
+else
+{
+	<MudThemeProvider IsDarkMode="true"/>
+	<MudGrid Justify="Justify.Center">
+		<MudItem xs="12" sm="6">
+			<MudCard>
+				<MudCardHeader>
+					<MudText Typo="Typo.h5"><b>Welcome to the FAQ Page</b></MudText>
+				</MudCardHeader>
+				<MudCardContent>
+					<MudText>Here you can find answers to frequently asked questions.</MudText>
+				</MudCardContent>
+			</MudCard>
+		</MudItem>
+	</MudGrid>
+
+
+	@foreach (var qnaSet in qnaSets)
+	{
+		<MudGrid Justify="Justify.Center">
+			<MudItem xs="12" sm="6">
+				<MudExpansionPanels MultiExpansion="true" Elevation="3">
+					<MudExpansionPanel Text="@qnaSet.Name">
+						<MudText Typo="Typo.h6">@qnaSet.Description</MudText>
+						<MudExpansionPanels MultiExpansion="true">
+							@foreach (var qna in qnaSet.QnAs)
+							{
+								<MudExpansionPanel Text="@qna.Question">
+									<MudText>@qna.Answer</MudText>
+								</MudExpansionPanel>
+							}
+						</MudExpansionPanels>
+					</MudExpansionPanel>
+				</MudExpansionPanels>
+			</MudItem>
+		</MudGrid>
+	}
+	<br />
+	<br />
+	<br />
+
+	<MudGrid Justify="Justify.Center">
+		<MudButton Color="Color.Primary" Variant="Variant.Filled" Href="edit">
+			Edit
+		</MudButton>
+	</MudGrid>
+}
+@code {
+	private List<QnASet> qnaSets = new();
+
+	protected async override Task OnInitializedAsync()
+	{
+		await InitializeQnASets();
+		await base.OnInitializedAsync();
+	}
+
+	private async Task InitializeQnASets()
+	{
+		qnaSets = await FAQApiService.GetQnASetsAsync();
+		foreach (var qnaSet in qnaSets)
+		{
+			qnaSet.QnAs = await FAQApiService.GetQuestionsByQnASetIdAsync(qnaSet.QnASetId);
+		}
+	}
+
+}

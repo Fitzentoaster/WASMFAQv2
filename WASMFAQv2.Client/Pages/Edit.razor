@@ -1,0 +1,137 @@
+﻿@page "/edit"
+
+@inject IFAQApiService _FAQApiService
+@inject NavigationManager _NavigationManager
+
+<PageTitle>Edit</PageTitle>
+
+<MudThemeProvider IsDarkMode="true" />
+
+<MudGrid Justify="Justify.Center">
+	<MudItem xs="12" sm="6">
+		<MudCard GutterBottom="true">
+			<MudCardHeader>
+				<MudText Typo="Typo.h5"><b>Edit FAQs</b></MudText>
+			</MudCardHeader>
+			<MudCardContent>
+				<MudText>Here you can view and edit FAQs and create new FAQs and Lists</MudText>
+			</MudCardContent>
+		</MudCard>
+	</MudItem>
+</MudGrid>
+<hr />
+
+<EditForm Model="model">
+	<MudGrid Justify="Justify.Center">
+		@foreach (var qnaSet in qnaSets)
+		{
+			<MudItem xs="12" sm="6">
+				<MudCard>
+					<MudCard GutterBottom="true">
+						<MudCardHeader>
+							<MudButton Color="Color.Secondary" Variant="Variant.Filled" @onclick="() => DeleteQnASetAsync(qnaSet.QnASetId)">
+								Delete Set
+							</MudButton>
+						</MudCardHeader>
+						<MudCardContent>
+							<MudTextField Label="Set Name" @bind-Value="qnaSet.Name" Variant="Variant.Outlined" />
+							<MudTextField Label="Set Description" @bind-Value="qnaSet.Description"></MudTextField>
+
+						</MudCardContent>
+					</MudCard>
+					<br />
+					@foreach (var qna in qnaSet.QnAs)
+					{
+						<MudCard GutterBottom="true">
+							<MudCardHeader>
+								<MudTextField Label="Question" Typo="Typo.h6" @bind-Value="qna.Question"></MudTextField>
+							</MudCardHeader>
+							<MudCardContent>
+								<MudTextField Label="Answer" @bind-Value="qna.Answer"></MudTextField>
+								<MudButton Color="Color.Secondary" Variant="Variant.Filled" OnClick="() => DeleteQnAAsync(qna.QnAId)">
+									Delete Q&A
+								</MudButton>
+							</MudCardContent>
+						</MudCard>
+					}
+				</MudCard>
+				<MudGrid Justify="Justify.FlexEnd">
+					<MudButton Color="Color.Success" Variant="Variant.Filled" OnClick="() => CreateQnAAsync(qnaSet.QnASetId)">Add Q&A</MudButton>
+				</MudGrid>
+			</MudItem>
+		}
+	</MudGrid>
+	<br />
+	<br />
+	<br />
+	<MudGrid Justify="Justify.Center">
+		<MudButton Color="Color.Primary" ButtonType="ButtonType.Submit" Variant="Variant.Filled" OnClick="SaveButtonAsync">Save Changes</MudButton>
+		<MudButton Color="Color.Success" Variant="Variant.Filled" @onclick="CreateQnASetAsync">
+			Create New Set
+		</MudButton>
+	</MudGrid>
+</EditForm>
+
+@code {
+	private List<QnASet> qnaSets = new();
+	private Model? model = new();
+
+	protected async override Task OnInitializedAsync()
+	{
+		await InitializeQnASets();
+		await base.OnInitializedAsync();
+	}
+
+	private async Task DeleteQnAAsync(int qnaId)
+	{
+		await _FAQApiService.DeleteQnAAsync(qnaId);
+		await InitializeQnASets(); 
+		StateHasChanged(); 
+	}
+
+	private async Task DeleteQnASetAsync(int qnaSetId)
+	{
+		await _FAQApiService.DeleteQnASetAsync(qnaSetId);
+		await InitializeQnASets(); 
+		StateHasChanged(); 
+	}
+
+	private async Task CreateQnASetAsync()
+	{
+		await _FAQApiService.AddQnASetAsync(new QnASet());
+		await InitializeQnASets(); 
+		StateHasChanged(); 
+	}
+
+	private async Task CreateQnAAsync(int QnASetId)
+	{
+		QnA qnaToAdd = new QnA();
+		qnaToAdd.QnASetId = QnASetId;
+		await _FAQApiService.AddQnAAsync(qnaToAdd);
+		await InitializeQnASets(); 
+		StateHasChanged(); 
+	}
+
+	private async Task SaveButtonAsync()
+	{
+		_NavigationManager.NavigateTo("/");
+	}
+
+	private async Task InitializeQnASets()
+	{
+		qnaSets = await _FAQApiService.GetQnASetsAsync();
+		foreach (var qnaSet in qnaSets)
+		{
+			qnaSet.QnAs = await _FAQApiService.GetQuestionsByQnASetIdAsync(qnaSet.QnASetId);
+		}
+	}
+	private class Model
+	{
+		public string? Name { get; set; }
+		public string? Description { get; set; }
+		public int QnASetId { get; set; }
+		public string? Question { get; set; }
+		public string? Answer { get; set; }
+		public int QnAId { get; set; }
+	}
+}
