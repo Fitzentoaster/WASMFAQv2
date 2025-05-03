@@ -13,6 +13,6 @@ namespace WASMFAQv2.Shared.Interfaces
         Task<bool> DeleteQnAAsync(int id);
         Task<bool> AddQnAAsync(QnA qna);
         Task<bool> SaveChanges();
-        Task<bool> UpdateQnAAsync(QnA qna, int qnaId);
+        Task<bool> UpdateQnAAsync(QnA qna);
     }
 }

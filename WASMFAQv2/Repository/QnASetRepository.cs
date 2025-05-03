@@ -37,13 +37,14 @@ namespace WASMFAQv2.Server.Repository
         }
         public async Task<bool> UpdateQnASetAsync(QnASet qnaSet)
         {
-            var existingQnASet = _context.QnASets
+            var existingQnASet = await _context.QnASets
                 .Include(q => q.QnAs)
                 .FirstOrDefaultAsync(q => q.QnASetId == qnaSet.QnASetId);
             if (existingQnASet == null)
             {
                 throw new Exception($"QnASet with id {qnaSet.QnASetId} not found");
             }
+            
             _context.Entry(existingQnASet).CurrentValues.SetValues(qnaSet);
 
             return await SaveChangesAsync();
@@ -82,7 +83,7 @@ namespace WASMFAQv2.Server.Repository
         public async Task<bool> DeleteQnAAsync(int id)
         {
             var qna = await _context.QnAs
-                .FirstOrDefaultAsync(q => q.QnAId == id);
+                .FirstOrDefaultAsync(q => q.QnaId == id);
             if (qna == null)
             {
                 throw new Exception($"QnA with id {id} not found");
@@ -103,15 +104,14 @@ namespace WASMFAQv2.Server.Repository
             qnaSet.QnAs.Add(qna);
             return await SaveChangesAsync();
         }
-        public async Task<bool> UpdateQnAAsync(QnA qna, int qnaId)
+        public async Task<bool> UpdateQnAAsync(QnA qna)
         {
             var existingQnA = await _context.QnAs
-                .FirstOrDefaultAsync(q => q.QnAId == qnaId);
+                .FirstOrDefaultAsync(q => q.QnaId == qna.QnaId);
             if (existingQnA == null)
             {
-                throw new Exception($"QnA with id {qna.QnAId} not found");
+                throw new Exception($"QnA with id {qna.QnaId} not found");
             }
-            qna.QnAId = qnaId;
             _context.Entry(existingQnA).CurrentValues.SetValues(qna);
             return await SaveChangesAsync();
         }

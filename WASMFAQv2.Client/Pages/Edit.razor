@@ -23,6 +23,7 @@ else if (qnaSets == null)
 else
 {
 	<MudThemeProvider IsDarkMode="true" />
+	<MudButton Color="Color.Primary" ButtonType="ButtonType.Submit" Variant="Variant.Filled" Href="/">Home</MudButton>
 
 	<MudGrid Justify="Justify.Center">
 		<MudItem xs="12" sm="6">
@@ -39,54 +40,54 @@ else
 	<hr />
 
 	<MudGrid Justify="Justify.Center">
-		@foreach (var qnaSet in qnaSets)
+		@foreach (var qnaset in qnaSets)
 		{
 			<MudItem xs="12" sm="6">
 				<MudCard>
-					<MudCard GutterBottom="true">
-						<MudCardHeader>
-							<MudButton Color="Color.Secondary" Variant="Variant.Filled" @onclick="() => DeleteQnASetAsync(qnaSet.QnASetId)">
-								Delete Set
-							</MudButton>
-						</MudCardHeader>
-						<MudCardContent>
-							<MudTextField Label="Set Name" @bind-Value="qnaSet.Name" Variant="Variant.Outlined" />
-							<MudTextField Label="Set Description" @bind-Value="qnaSet.Description"></MudTextField>
-
-						</MudCardContent>
-					</MudCard>
-					<br />
-					@foreach (var qna in qnaSet.QnAs)
-					{
-						<EditForm Model="qnaModel">
-							<MudCard GutterBottom="true">
-								<MudCardHeader>
-									<MudTextField Label="Question" Typo="Typo.h6" @bind-Value="qna.Question"></MudTextField>
-								</MudCardHeader>
-								<MudCardContent>
-									<MudTextField Label="Answer" @bind-Value="qna.Answer"></MudTextField>
-									<MudButton Color="Color.Secondary" Variant="Variant.Filled" OnClick="() => DeleteQnAAsync(qna.QnAId)">
-										Delete Q&A
-									</MudButton>
-									<MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="() => SaveQnAAsync(qna.QnAId)" >
-										Save Q&A
-									</MudButton>
-								</MudCardContent>
-							</MudCard>
-						</EditForm>
-					}
+					<MudCardHeader>
+						<MudButton Color="Color.Error" Variant="Variant.Filled" OnClick="@(() => DeleteQnASetAsync(qnaset.QnASetId))">
+							<MudIcon Icon="@Icons.Material.Filled.Delete" />Delete Set
+						</MudButton>
+						<MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="@(() => SaveQnASetAsync(qnaset))">
+							<MudIcon Icon="@Icons.Material.Filled.Save" /> Save Set
+						</MudButton>
+					</MudCardHeader>
+					<MudCardContent>
+						<MudTextField Label="Set Name" @bind-Value="qnaset.Name" Variant="Variant.Outlined" />
+						<MudTextField Label="Set Description" @bind-Value="qnaset.Description" />
+					</MudCardContent>
 				</MudCard>
-				<MudGrid Justify="Justify.FlexEnd">
-					<MudButton Color="Color.Success" Variant="Variant.Filled" OnClick="() => CreateQnAAsync(qnaSet.QnASetId)">Add Q&A</MudButton>
-				</MudGrid>
+				<MudCard>
+					<MudCardHeader>
+						<MudText Typo="Typo.h6">Questions</MudText>	
+					</MudCardHeader>
+					<MudCardContent>
+						@foreach (var qna in qnaset.QnAs)
+						{
+							<br />
+							<MudTextField Label="Question" @bind-Value="qna.Question" Variant="Variant.Outlined" />
+							<MudTextField Label="Answer" @bind-Value="qna.Answer" />
+							<br />
+							<MudButton Color="Color.Error" Variant="Variant.Filled" OnClick="@(() => DeleteQnAAsync(qna.QnaId))">
+								<MudIcon Icon="@Icons.Material.Filled.Delete" /> Delete Q&A
+							</MudButton>
+							<MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="@(() => SaveQnAAsync(qna))">
+								<MudIcon Icon="@Icons.Material.Filled.Save" /> Save Q&A
+							</MudButton>
+							<MudButton Color="Color.Success" Variant="Variant.Filled" OnClick="@(() => CreateQnAAsync(qnaset.QnASetId))">
+								<MudIcon Icon="@Icons.Material.Filled.Add" /> Add Q&A
+							</MudButton>
+						}
+					</MudCardContent>
+				</MudCard>
 			</MudItem>
 		}
 	</MudGrid>
+			
 	<br />
 	<br />
 	<br />
 	<MudGrid Justify="Justify.Center">
-		<MudButton Color="Color.Primary" ButtonType="ButtonType.Submit" Variant="Variant.Filled" OnClick="SaveButtonAsync">Save Changes</MudButton>
 		<MudButton Color="Color.Success" Variant="Variant.Filled" @onclick="CreateQnASetAsync">
 			Create New Set
 		</MudButton>
@@ -95,7 +96,7 @@ else
 }
 @code {
 	private List<QnASet> qnaSets = new();
-	private QNAModel? qnaModel = new();
+	private QnASetModel? qnaSetModel = new();
 	private IFAQApiService? FAQApiService;
 	private bool initialized;
 
@@ -148,20 +149,18 @@ else
 		StateHasChanged(); 
 	}
 
-	private async Task SaveQnAAsync(int qnaId)
+	private async Task SaveQnAAsync(QnA qna)
 	{
-		QnA qna = new QnA();
-		qna.QnAId = qnaId;
-		qna.Question = qnaModel.Question;
-		qna.Answer = qnaModel.Answer;
-		await FAQApiService.UpdateQnAAsync(qna, qnaId);
+		await FAQApiService.UpdateQnAAsync(qna);
 		await InitializeQnASets();
 		StateHasChanged();
 	}
 
-	private async Task SaveButtonAsync()
+	private async Task SaveQnASetAsync(QnASet qnaSet)
 	{
-		NavigationManager.NavigateTo("/");
+		await FAQApiService.UpdateQnASetAsync(qnaSet);
+		await InitializeQnASets();
+		StateHasChanged();
 	}
 
 	private async Task InitializeQnASets()
@@ -172,10 +171,11 @@ else
 			qnaSet.QnAs = await FAQApiService.GetQuestionsByQnASetIdAsync(qnaSet.QnASetId);
 		}
 	}
-	private class QNAModel
+
+	private class QnASetModel
 	{
-		public string? Question { get; set; }
-		public string? Answer { get; set; }
-		public int QnAId { get; set; }
+		public string? Name { get; set; }
+		public string? Description { get; set; }
+		public int QnASetId { get; set; }
 	}
 }

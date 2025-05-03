@@ -9,8 +9,7 @@ namespace WASMFAQv2.Shared.Models
         public int QnASetId { get; set; }
         public string? Name { get; set; }
         public string? Description { get; set; }
-        [NotMapped]
-        public List<QnA> QnAs { get; set; } = new List<QnA>();
+        public List<QnA>? QnAs { get; set; }
     }
 
 
