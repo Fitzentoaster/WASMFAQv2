@@ -1,6 +1,6 @@
 ﻿@inject IFAQApiService FAQApiService
 
-<MudDialog>
+<MudDialog style="min-height: 600px;">
     <TitleContent>
         New Q&A
     </TitleContent>
@@ -12,11 +12,63 @@
                 <MudItem xs="12">
                     <MudTextField Label="Question" @bind-Value="qna.Question" Required="true" />
                 </MudItem>
-                <MudItem xs="12">
-                    <MudTextField Label="Answer" @bind-Value="qna.Answer" Required="true" />
-                </MudItem>
             </MudGrid>
         </EditForm>
+        <hr />
+        <MudGrid>
+            <MudItem xs="12">
+                <MudText Typo="Typo.h6">Answer</MudText>
+            </MudItem>
+            <MudItem xs="12">
+                <MudText Typo="Typo.body2">Use the editor below to format your answer.</MudText>
+            </MudItem>
+        </MudGrid>
+        <MudItem xs="12">
+            <div style="color: white">
+                <BlazoredTextEditor @ref="@answerEditor">
+                    <ToolbarContent>
+                        <span class="ql-formats">
+                            <select class="ql-font">
+                                <option selected=""></option>
+                                <option value="serif"></option>
+                                <option value="monospace"></option>
+                            </select>
+                            <select class="ql-size">
+                                <option value="small"></option>
+                                <option selected=""></option>
+                                <option value="large"></option>
+                                <option value="huge"></option>
+                            </select>
+                        </span>
+                        <span class="ql-formats">
+                            <button class="ql-bold"></button>
+                            <button class="ql-italic"></button>
+                            <button class="ql-underline"></button>
+                            <button class="ql-strike"></button>
+                        </span>
+                        <span class="ql-formats">
+                            <select class="ql-color"></select>
+                            <select class="ql-background"></select>
+                        </span>
+                        <span class="ql-formats">
+                            <button class="ql-list" value="ordered"></button>
+                            <button class="ql-list" value="bullet"></button>
+                            <button class="ql-indent" value="-1"></button>
+                            <button class="ql-indent" value="+1"></button>
+                            <select class="ql-align">
+                                <option selected=""></option>
+                                <option value="center"></option>
+                                <option value="right"></option>
+                                <option value="justify"></option>
+                            </select>
+                        </span>
+                        <span class="ql-formats">
+                            <button class="ql-link"></button>
+                        </span>
+                    </ToolbarContent>
+                </BlazoredTextEditor>
+            </div>
+        </MudItem>
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">Cancel</MudButton>
@@ -24,26 +76,53 @@
     </DialogActions>
 </MudDialog>
 @code {
-    
+
     private EditContext editContext;
 
     [CascadingParameter]
     private IMudDialogInstance MudDialog { get; set; }
 
     [Parameter]
-    public int QnASetId { get; set; }
-
-    [Parameter]
     public QnA qna { get; set; } = new();
 
-    private async Task Submit() 
+    [Parameter]
+	public int QnASetId { get; set; }
+
+    private BlazoredTextEditor? answerEditor;
+    private bool initialized = false;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
+        if (firstRender && !initialized)
+        {
+            initialized = true;
+
+            await Task.Delay(100);
+
+            if (answerEditor is not null)
+            {
+                try
+                {
+                    await answerEditor.LoadHTMLContent(qna?.Answer ?? string.Empty);
+                }
+                catch (JSException ex)
+                {
+                    Console.WriteLine($"Editor failed to load content: {ex.Message}");
+                }
+            }
+        }
+    }
+
+    private async Task Submit()
+    {
+        qna.Answer = await answerEditor.GetHTML();
+		qna.QnASetId = QnASetId;
         MudDialog.Close(DialogResult.Ok(qna));
     }
     private void Cancel() => MudDialog.Cancel();
 
-	protected override async Task OnInitializedAsync()
-	{
-		editContext = new EditContext(qna);
-	}
+    protected override async Task OnInitializedAsync()
+    {
+        editContext = new EditContext(qna);
+    }
 }

@@ -37,7 +37,6 @@ else
 		</MudItem>
 	</MudGrid>
 
-
 	@foreach (var qnaSet in qnaSets)
 	{
 		<MudGrid Justify="Justify.Center">
@@ -58,7 +57,9 @@ else
 											<MudText Typo="Typo.h6">@qna.Question</MudText>
 										</TitleContent>
 										<ChildContent>
-											<MudText Typo="Typo.body1">@qna.Answer</MudText>
+											<MudText Typo="Typo.body1" Markup="true">
+													@((MarkupString)qna.Answer)
+											</MudText>
 
 										</ChildContent>
 									</MudExpansionPanel>
@@ -114,4 +115,6 @@ else
 			StateHasChanged(); 
 		}
 	}
+
+
 }
