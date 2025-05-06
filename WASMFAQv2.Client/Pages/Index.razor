@@ -28,10 +28,10 @@ else
 		<MudItem xs="12" sm="6">
 			<MudCard>
 				<MudCardHeader>
-					<MudText Typo="Typo.h5"><b>Welcome to the FAQ Page</b></MudText>
+					<MudText Typo="Typo.h4"><b>@faq.Title</b></MudText>
 				</MudCardHeader>
 				<MudCardContent>
-					<MudText>Here you can find answers to frequently asked questions.</MudText>
+					<MudText>@faq.Description</MudText>
 				</MudCardContent>
 			</MudCard>
 		</MudItem>
@@ -50,20 +50,20 @@ else
 						<ChildContent>
 							<MudText Typo="Typo.body1">@qnaSet.Description</MudText>
 
-						<MudExpansionPanels MultiExpansion="true">
-							@foreach (var qna in qnaSet.QnAs)
-							{
-								<MudExpansionPanel>
-									<TitleContent>
-										<MudText Typo="Typo.h6">@qna.Question</MudText>
-									</TitleContent>
-									<ChildContent>
-										<MudText Typo="Typo.body1">@qna.Answer</MudText>
+							<MudExpansionPanels MultiExpansion="true">
+								@foreach (var qna in qnaSet.QnAs)
+								{
+									<MudExpansionPanel>
+										<TitleContent>
+											<MudText Typo="Typo.h6">@qna.Question</MudText>
+										</TitleContent>
+										<ChildContent>
+											<MudText Typo="Typo.body1">@qna.Answer</MudText>
 
-									</ChildContent>
-								</MudExpansionPanel>
-							}
-						</MudExpansionPanels>
+										</ChildContent>
+									</MudExpansionPanel>
+								}
+							</MudExpansionPanels>
 						</ChildContent>
 					</MudExpansionPanel>
 				</MudExpansionPanels>
@@ -83,6 +83,7 @@ else
 @code {
 	private IFAQApiService? FAQApiService;
 	private List<QnASet>? qnaSets;
+	private FAQ faq;
 	private bool initialized;
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -90,7 +91,16 @@ else
 		if (firstRender && OperatingSystem.IsBrowser())
 		{
 			FAQApiService = ServiceProvider.GetRequiredService<IFAQApiService>();
-
+			faq = await FAQApiService.GetFAQAsync();
+			if (faq == null)
+			{
+				faq = new FAQ
+					{
+						Title = "FAQ",
+						Description = "Frequently Asked Questions"
+					};
+				await FAQApiService.CreateFAQAsync(faq);
+			}
 			qnaSets = await FAQApiService.GetQnASetsAsync();
 			qnaSets = qnaSets.OrderBy(q => q.SortOrder).ToList();
 

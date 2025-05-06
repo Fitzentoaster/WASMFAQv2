@@ -17,6 +17,8 @@ namespace WASMFAQv2.Shared.Interfaces
         Task<FAQ> GetFAQAsync();
         Task<bool> NormalizeQnASetSortOrderAsync();
         Task<bool> NormalizeQnASortOrderAsync();
+        Task<bool> UpdateFAQAsync(FAQ faq);
+        Task<bool> CreateFAQAsync(FAQ faq);
 
 
     }

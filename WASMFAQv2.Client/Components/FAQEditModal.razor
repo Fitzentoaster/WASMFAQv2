@@ -1,0 +1,46 @@
+﻿@inject IFAQApiService FAQApiService
+
+<MudDialog>
+    <TitleContent>
+        Edit FAQ Name and Description
+    </TitleContent>
+    <DialogContent>
+        <EditForm EditContext="editContext">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+            <MudGrid>
+                <MudItem xs="12">
+                    <MudTextField Label="FAQ Title" @bind-Value="faq.Title" Required="true" />
+                </MudItem>
+                <MudItem xs="12">
+                    <MudTextField Label="FAQ Description" @bind-Value="faq.Description" Required="true" />
+                </MudItem>
+            </MudGrid>
+        </EditForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit">Ok</MudButton>
+    </DialogActions>
+</MudDialog>
+@code {
+
+    private EditContext editContext;
+
+    [CascadingParameter]
+    private IMudDialogInstance MudDialog { get; set; }
+
+    [Parameter]
+    public FAQ faq { get; set; } = new();
+
+    private async Task Submit()
+    {
+        MudDialog.Close(DialogResult.Ok(faq));
+    }
+    private void Cancel() => MudDialog.Cancel();
+
+    protected override async Task OnInitializedAsync()
+    {
+        editContext = new EditContext(faq);
+    }
+}

@@ -60,7 +60,7 @@ namespace WASMFAQv2.Client.Services
         }
         public async Task<FAQ> GetFAQAsync()
         {
-            return await _httpClient.GetFromJsonAsync<FAQ>("api/faq");
+            return await _httpClient.GetFromJsonAsync<FAQ>("api/faq/faq");
         }
         public async Task<bool> NormalizeQnASetSortOrderAsync()
         {
@@ -70,6 +70,16 @@ namespace WASMFAQv2.Client.Services
         public async Task<bool> NormalizeQnASortOrderAsync()
         {
             var response = await _httpClient.PostAsync("api/faq/qnasets/questions/normalize-sort-order", null);
+            return response.IsSuccessStatusCode;
+        }
+        public async Task<bool> UpdateFAQAsync(FAQ faq)
+        {
+            var response = await _httpClient.PutAsJsonAsync("api/faq/faq", faq);
+            return response.IsSuccessStatusCode;
+        }
+        public async Task<bool> CreateFAQAsync(FAQ faq)
+        {
+            var response = await _httpClient.PostAsJsonAsync("api/faq/faq", faq);
             return response.IsSuccessStatusCode;
         }
     }

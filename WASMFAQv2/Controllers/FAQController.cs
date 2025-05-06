@@ -119,5 +119,23 @@ namespace WASMFAQv2.Server.Controllers
             }
             return BadRequest();
         }
+        [HttpPut("faq")]
+        public async Task<IActionResult> UpdateFAQ([FromBody] FAQ faq)
+        {
+            if (await _qnaSetRepository.UpdateFAQAsync(faq))
+            {
+                return NoContent();
+            }
+            return BadRequest();
+        }
+        [HttpPost("faq")]
+        public async Task<IActionResult> CreateFAQ([FromBody] FAQ faq)
+        {
+            if (await _qnaSetRepository.CreateFAQAsync(faq))
+            {
+                return CreatedAtAction(nameof(GetFAQ), new { id = faq.FAQId }, faq);
+            }
+            return BadRequest();
+        }
     }
 }

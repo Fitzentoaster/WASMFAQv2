@@ -122,7 +122,8 @@ namespace WASMFAQv2.Server.Repository
                 .FirstOrDefaultAsync();
             if (faq == null)
             {
-                throw new Exception($"FAQ not found");
+                faq.Title = "FAQ";
+                faq.Description = "Frequently Asked Questions";
             }
             return faq;
         }
@@ -155,6 +156,28 @@ namespace WASMFAQv2.Server.Repository
 
             await _context.SaveChangesAsync();
             return true;
+        }
+        public async Task<bool> UpdateFAQAsync(FAQ faq)
+        {
+            var existingFAQ = await _context.FAQs
+                .FirstOrDefaultAsync();
+            if (existingFAQ == null)
+            {
+                throw new Exception($"FAQ not found");
+            }
+            _context.Entry(existingFAQ).CurrentValues.SetValues(faq);
+            return await SaveChangesAsync();
+        }
+        public async Task<bool> CreateFAQAsync(FAQ faq)
+        {
+            var existingFAQ = await _context.FAQs
+                .FirstOrDefaultAsync();
+            if (existingFAQ != null)
+            {
+                throw new Exception($"FAQ already exists");
+            }
+            _context.FAQs.Add(faq);
+            return await SaveChangesAsync();
         }
     }
 }

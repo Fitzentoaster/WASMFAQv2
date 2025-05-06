@@ -29,10 +29,18 @@ else
 		<MudItem xs="12" sm="6">
 			<MudCard GutterBottom="true">
 				<MudCardHeader>
-					<MudText Typo="Typo.h5"><b>Edit FAQs</b></MudText>
+					<MudText Typo="Typo.h5"><b>Edit FAQ</b></MudText>
 				</MudCardHeader>
 				<MudCardContent>
-					<MudText>Here you can view and edit FAQs and create new Q&As and Sets</MudText>
+					<MudText Typo="Typo.h4">FAQ Title: @faq.Title</MudText>
+					<MudText Typo="Typo.h6">FAQ Description: @faq.Description</MudText>
+					<br />
+					<br />
+					<MudGrid Justify="Justify.Center">
+						<MudButton Color="Color.Success" Variant="Variant.Filled" OnClick="@(() => EditFAQAsync(faq))">
+							<MudIcon Icon="@Icons.Material.Filled.Edit" />
+						</MudButton>
+					</MudGrid>
 				</MudCardContent>
 			</MudCard>
 		</MudItem>
@@ -91,7 +99,7 @@ else
 									</MudButton>
 								</MudItem>
 								<MudItem xs="12" sm="4" md="8">
-									<MudText Typo="Typo.h5">@qna.Question : @qna.SortOrder</MudText>
+									<MudText Typo="Typo.h5">@qna.Question</MudText>
 									<MudText>@qna.Answer</MudText>
 								</MudItem>
 								<MudItem xs="2" md="1">
@@ -140,6 +148,7 @@ else
 @code {
 	private List<QnASet> qnaSets = new();
 	private QnASetModel? qnaSetModel = new();
+	private FAQ faq = new();
 	private IFAQApiService? FAQApiService;
 	private bool initialized;
 
@@ -155,7 +164,7 @@ else
 			{
 				qnaSet.QnAs = await FAQApiService.GetQuestionsByQnASetIdAsync(qnaSet.QnASetId);
 			}
-
+			faq = await FAQApiService.GetFAQAsync();
 			initialized = true;
 			StateHasChanged();
 		}
@@ -258,6 +267,25 @@ else
 			qna = (QnA)result.Data;
 			await FAQApiService.UpdateQnAAsync(qna);
 			await InitializeQnASets();
+			StateHasChanged();
+		}
+		else
+		{
+			Console.WriteLine("Dialog was cancelled");
+		}
+	}
+
+	private async Task EditFAQAsync(FAQ faq)
+	{
+		var parameters = new DialogParameters();
+		parameters.Add("faq", faq);
+		var options = new DialogOptions { BackgroundClass = "bg-blur" };
+		var dialog = await DialogService.ShowAsync<FAQEditModal>("Edit FAQ Data", parameters, options);
+		var result = await dialog.Result;
+		if (!result.Canceled)
+		{
+			faq = (FAQ)result.Data;
+			await FAQApiService.UpdateFAQAsync(faq);
 			StateHasChanged();
 		}
 		else
