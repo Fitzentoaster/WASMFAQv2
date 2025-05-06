@@ -24,18 +24,21 @@ else if (qnaSets == null)
 else
 {
 	<MudThemeProvider IsDarkMode="true" />
-	<MudGrid Justify="Justify.Center">
-		<MudItem xs="12" sm="6">
-			<MudCard>
-				<MudCardHeader>
-					<MudText Typo="Typo.h4"><b>@faq.Title</b></MudText>
-				</MudCardHeader>
-				<MudCardContent>
-					<MudText>@faq.Description</MudText>
-				</MudCardContent>
-			</MudCard>
-		</MudItem>
-	</MudGrid>
+	@if (faq is not null)
+	{
+		<MudGrid Justify="Justify.Center">
+			<MudItem xs="12" sm="6">
+				<MudCard>
+					<MudCardHeader>
+						<MudText Typo="Typo.h4"><b>@faq.Title</b></MudText>
+					</MudCardHeader>
+					<MudCardContent>
+						<MudText>@faq.Description</MudText>
+					</MudCardContent>
+				</MudCard>
+			</MudItem>
+		</MudGrid>
+	}
 
 	@foreach (var qnaSet in qnaSets)
 	{
@@ -50,7 +53,7 @@ else
 							<MudText Typo="Typo.body1">@qnaSet.Description</MudText>
 
 							<MudExpansionPanels MultiExpansion="true">
-								@foreach (var qna in qnaSet.QnAs)
+								@foreach (var qna in qnaSet.QnAs ?? Enumerable.Empty<QnA>())
 								{
 									<MudExpansionPanel>
 										<TitleContent>
@@ -58,7 +61,7 @@ else
 										</TitleContent>
 										<ChildContent>
 											<MudText Typo="Typo.body1" Markup="true">
-													@((MarkupString)qna.Answer)
+													@((MarkupString)(qna.Answer ?? string.Empty))
 											</MudText>
 
 										</ChildContent>
@@ -84,8 +87,7 @@ else
 @code {
 	private IFAQApiService? FAQApiService;
 	private List<QnASet>? qnaSets;
-	private FAQ faq;
-	private bool initialized;
+	private FAQ? faq;
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
@@ -111,7 +113,6 @@ else
 				qnaSet.QnAs = qnaSet.QnAs.OrderBy(q => q.SortOrder).ToList();
 			}
 
-			initialized = true;
 			StateHasChanged(); 
 		}
 	}

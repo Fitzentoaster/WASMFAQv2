@@ -5,7 +5,7 @@
 namespace WASMFAQv2.Migrations
 {
     /// <inheritdoc />
-    public partial class addedsortorder : Migration
+    public partial class Addedsortorder : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

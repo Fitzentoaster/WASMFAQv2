@@ -12,7 +12,7 @@ namespace WASMFAQv2.Migrations
 {
     [DbContext(typeof(FAQContext))]
     [Migration("20250503015031_initial")]
-    partial class initial
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

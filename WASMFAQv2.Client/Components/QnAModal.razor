@@ -16,12 +16,12 @@
         </EditForm>
         <hr />
         <MudGrid>
-			<MudItem xs="12">
-				<MudText Typo="Typo.h6">Answer</MudText>
-			</MudItem>
-			<MudItem xs="12">
-				<MudText Typo="Typo.body2">Use the editor below to format your answer.</MudText>
-			</MudItem>
+            <MudItem xs="12">
+                <MudText Typo="Typo.h6">Answer</MudText>
+            </MudItem>
+            <MudItem xs="12">
+                <MudText Typo="Typo.body2">Use the editor below to format your answer.</MudText>
+            </MudItem>
         </MudGrid>
         <MudItem xs="12">
             <div style="color: white">
@@ -65,7 +65,7 @@
                         <span class="ql-formats">
                             <button class="ql-link"></button>
                         </span>
-                     </ToolbarContent>
+                    </ToolbarContent>
                 </BlazoredTextEditor>
             </div>
         </MudItem>
@@ -75,12 +75,13 @@
         <MudButton Color="Color.Primary" OnClick="Submit">Ok</MudButton>
     </DialogActions>
 </MudDialog>
+
 @code {
 
-    private EditContext editContext;
+    private EditContext editContext = null!;
 
     [CascadingParameter]
-    private IMudDialogInstance MudDialog { get; set; }
+    private IMudDialogInstance? MudDialog { get; set; }
 
     [Parameter]
     public int QnASetId { get; set; }
@@ -116,12 +117,12 @@
     private async Task Submit() 
     {
 		qna.QnASetId = QnASetId;
-		qna.Answer = await answerEditor.GetHTML();
-        MudDialog.Close(DialogResult.Ok(qna));
+		qna.Answer = await answerEditor!.GetHTML();
+        MudDialog!.Close(DialogResult.Ok(qna));
     }
-    private void Cancel() => MudDialog.Cancel();
+    private void Cancel() => MudDialog!.Cancel();
 
-	protected override async Task OnInitializedAsync()
+	protected override void OnInitialized()
 	{
 		editContext = new EditContext(qna);
 	}

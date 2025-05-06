@@ -77,10 +77,10 @@
 </MudDialog>
 @code {
 
-    private EditContext editContext;
+    private EditContext editContext = null!;
 
     [CascadingParameter]
-    private IMudDialogInstance MudDialog { get; set; }
+    private IMudDialogInstance? MudDialog { get; set; }
 
     [Parameter]
     public QnA qna { get; set; } = new();
@@ -115,13 +115,13 @@
 
     private async Task Submit()
     {
-        qna.Answer = await answerEditor.GetHTML();
+        qna.Answer = await answerEditor!.GetHTML();
 		qna.QnASetId = QnASetId;
-        MudDialog.Close(DialogResult.Ok(qna));
+        MudDialog!.Close(DialogResult.Ok(qna));
     }
-    private void Cancel() => MudDialog.Cancel();
+    private void Cancel() => MudDialog!.Cancel();
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
         editContext = new EditContext(qna);
     }

@@ -24,19 +24,21 @@ else if (qnaSets == null)
 else
 {
 	<MudThemeProvider IsDarkMode="true" />
-	
+
 	<MudLayout>
 		<MudAppBar Elevation="4" Fixed="true">
 			<MudGrid Justify="Justify.Center">
 				<MudButton Color="Color.Success" Variant="Variant.Filled" @onclick="CreateQnASetAsync">
 					<MudIcon Icon="@Icons.Material.Filled.Add" />
+					Add Q&A Set
 				</MudButton>
 				<MudButton Color="Color.Primary" Variant="Variant.Filled" Href="/">
 					<MudIcon Icon="@Icons.Material.Filled.Home" />
+					Go Home
 				</MudButton>
 			</MudGrid>
 		</MudAppBar>
-	
+
 		<MudGrid Justify="Justify.Center" Class="mt-16">
 			<MudItem xs="12" sm="6">
 				<MudCard GutterBottom="true">
@@ -89,11 +91,9 @@ else
 						</MudCardContent>
 					</MudCard>
 					<MudCard>
-						<MudCardHeader>
-							<MudText Typo="Typo.h6">Q&As:</MudText>	
-						</MudCardHeader>
+
 						<MudCardContent>
-							@foreach (var qna in qnaSet.QnAs)
+							@foreach (var qna in qnaSet.QnAs ?? Enumerable.Empty<QnA>())
 							{
 								<MudCard>
 									<MudGrid Justify="Justify.SpaceBetween" Class="mb-4">
@@ -110,7 +110,7 @@ else
 										<MudItem xs="12" sm="4" md="8">
 											<MudText Typo="Typo.h5">@qna.Question</MudText>
 											<MudText Markup="true">
-												@((MarkupString)qna.Answer)
+												@((MarkupString)(qna.Answer ?? string.Empty))
 											</MudText>
 										</MudItem>
 										<MudItem xs="2" md="1">
@@ -149,10 +149,9 @@ else
 }
 @code {
 	private List<QnASet> qnaSets = new();
-	private QnASetModel? qnaSetModel = new();
+	private QnASetModel qnaSetModel = new();
 	private FAQ faq = new();
-	private IFAQApiService? FAQApiService;
-	private bool initialized;
+	private IFAQApiService FAQApiService = null!;
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
@@ -166,8 +165,7 @@ else
 			{
 				qnaSet.QnAs = await FAQApiService.GetQuestionsByQnASetIdAsync(qnaSet.QnASetId);
 			}
-			faq = await FAQApiService.GetFAQAsync();
-			initialized = true;
+			faq = await FAQApiService.GetFAQAsync();;
 			StateHasChanged();
 		}
 	}
@@ -175,28 +173,24 @@ else
 	private async Task DeleteQnAAsync(int qnaId)
 	{
 		var options = new DialogOptions { BackgroundClass = "bg-blur" };
-		var dialog = DialogService.Show<ConfirmDeleteModal>("Confirm Delete", options);
+		var dialog = await DialogService.ShowAsync<ConfirmDeleteModal>("Confirm Delete", options);
 		var result = await dialog.Result;
 
-		if (!result.Canceled)
+		if (result is not null && !result.Canceled)
 		{
 			await FAQApiService.DeleteQnAAsync(qnaId);
 			await InitializeQnASets();
 			StateHasChanged();
-		}
-		else
-		{
-			Console.WriteLine("Dialog was cancelled.");
 		}
 	}
 
 	private async Task DeleteQnASetAsync(int qnaSetId)
 	{
 		var options = new DialogOptions { BackgroundClass = "bg-blur" };
-		var dialog = DialogService.Show<ConfirmDeleteModal>("Confirm Delete", options);
+		var dialog = await DialogService.ShowAsync<ConfirmDeleteModal>("Confirm Delete", options);
 		var result = await dialog.Result;
 
-		if (!result.Canceled)
+		if (result is not null && !result.Canceled)
 		{
 			await FAQApiService.DeleteQnASetAsync(qnaSetId);
 			await InitializeQnASets();
@@ -216,15 +210,18 @@ else
 		var options = new DialogOptions { BackgroundClass = "bg-blur" };
 		var dialog = await DialogService.ShowAsync<QnASetEditModal>("Edit Q&A Set", parameters, options);
 		var result = await dialog.Result;
-		if (!result.Canceled)
+		if (result is not null && !result.Canceled)
 		{
-			var updated = (QnASet)result.Data;
-			updated.QnASetId = qnaSet.QnASetId;
-			updated.SortOrder = qnaSet.SortOrder;
+			var updated = result.Data as QnASet;
+			if (updated is not null)
+			{
+				updated.QnASetId = qnaSet.QnASetId;
+				updated.SortOrder = qnaSet.SortOrder;
 
-			await FAQApiService.UpdateQnASetAsync(updated);
-			await InitializeQnASets();
-			StateHasChanged();
+				await FAQApiService.UpdateQnASetAsync(updated);
+				await InitializeQnASets();
+				StateHasChanged();
+			}
 		}
 		else
 		{
@@ -240,18 +237,13 @@ else
 		var options = new DialogOptions { BackgroundClass = "bg-blur" };
 		var dialog = await DialogService.ShowAsync<QnASetModal>("New Q&A Set", parameters, options);
 		var result = await dialog.Result;
-		if (!result.Canceled)
+		if (result is not null && !result.Canceled && result.Data is QnASet qnaSet)
 		{
-			var qnaSet = (QnASet)result.Data;
 			qnaSet.SortOrder = qnaSets.Count + 1;
 			await FAQApiService.AddQnASetAsync(qnaSet);
 			await FAQApiService.NormalizeQnASetSortOrderAsync();
 			await InitializeQnASets();
 			StateHasChanged();
-		}
-		else
-		{
-			Console.WriteLine("Dialog was cancelled");
 		}
 
 	}
@@ -270,11 +262,10 @@ else
 		var dialog = await DialogService.ShowAsync<QnAModal>("New Q&A", parameters, options);
 		var result = await dialog.Result;
 
-		if (!result.Canceled)
+		if (result is not null && !result.Canceled && result.Data is QnA qna)
 		{
-			var qna = (QnA)result.Data;
 			qna.QnASetId = QnASetId;
-			qna.SortOrder = qnaSets.FirstOrDefault(q => q.QnASetId == QnASetId)?.QnAs.Count + 1 ?? 1;
+			qna.SortOrder = (qnaSets.FirstOrDefault(q => q.QnASetId == QnASetId)?.QnAs?.Count ?? 0) + 1;
 			await FAQApiService.AddQnAAsync(qna);
 			await FAQApiService.NormalizeQnASortOrderAsync();
 			await InitializeQnASets();
@@ -299,9 +290,8 @@ else
 			}; 
 		var dialog = await DialogService.ShowAsync<QnAEditModal>("Edit Q&A", parameters, options);
 		var result = await dialog.Result;
-		if (!result.Canceled)
+		if (result is not null && !result.Canceled && result.Data is QnA updated)
 		{
-			var updated = (QnA)result.Data;
 			updated.QnASetId = qnaSetId;
 			updated.SortOrder = qna.SortOrder;
 
@@ -322,10 +312,9 @@ else
 		var options = new DialogOptions { BackgroundClass = "bg-blur" };
 		var dialog = await DialogService.ShowAsync<FAQEditModal>("Edit FAQ Data", parameters, options);
 		var result = await dialog.Result;
-		if (!result.Canceled)
+		if (result is not null && !result.Canceled && result.Data is FAQ updated)
 		{
-			faq = (FAQ)result.Data;
-			await FAQApiService.UpdateFAQAsync(faq);
+			await FAQApiService.UpdateFAQAsync(updated);
 			StateHasChanged();
 		}
 		else
@@ -372,6 +361,8 @@ else
 
 	private async Task MoveQnAUp(QnA qna, QnASet qnaSet)
 	{
+		if (qnaSet == null) return;
+		if (qnaSet.QnAs == null) return;
 		var ordered = qnaSet.QnAs.OrderBy(q => q.SortOrder).ToList();
 		var index = ordered.FindIndex(q => q.QnaId == qna.QnaId);
 		if (index <= 0) return;
@@ -390,6 +381,8 @@ else
 
 	private async Task MoveQnADown(QnA qna, QnASet qnaSet)
 	{
+		if (qnaSet == null) return;
+		if (qnaSet.QnAs == null) return;
 		var ordered = qnaSet.QnAs.OrderBy(q => q.SortOrder).ToList();
 		var index = ordered.FindIndex(q => q.QnaId == qna.QnaId);
 		if (index < 0 || index >= ordered.Count - 1) return;

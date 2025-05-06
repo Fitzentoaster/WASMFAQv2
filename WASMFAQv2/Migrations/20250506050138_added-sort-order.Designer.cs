@@ -12,7 +12,7 @@ namespace WASMFAQv2.Migrations
 {
     [DbContext(typeof(FAQContext))]
     [Migration("20250506050138_added-sort-order")]
-    partial class addedsortorder
+    partial class Addedsortorder
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

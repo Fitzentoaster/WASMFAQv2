@@ -23,21 +23,21 @@
 </MudDialog>
 @code {
 
-    private EditContext editContext;
+    private EditContext editContext = null!;
 
     [CascadingParameter]
-    private IMudDialogInstance MudDialog { get; set; }
+    private IMudDialogInstance? MudDialog { get; set; }
 
     [Parameter]
     public QnASet qnaSet { get; set; } = new();
 
-    private async Task Submit() 
+    private void Submit() 
     {
-        MudDialog.Close(DialogResult.Ok(qnaSet));
+        MudDialog!.Close(DialogResult.Ok(qnaSet));
     }
-    private void Cancel() => MudDialog.Cancel();
+    private void Cancel() => MudDialog!.Cancel();
 
-	protected override async Task OnInitializedAsync()
+	protected override void OnInitialized()
 	{
 		editContext = new EditContext(qnaSet);
 	}
