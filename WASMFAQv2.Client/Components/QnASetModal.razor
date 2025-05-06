@@ -1,0 +1,44 @@
+﻿<MudDialog>
+    <TitleContent>
+        New Q&A Set
+    </TitleContent>
+    <DialogContent>
+        <EditForm EditContext="editContext">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+            <MudGrid>
+                <MudItem xs="12">
+                    <MudTextField Label="Set Name" @bind-Value="qnaSet.Name" Required="true" />
+                </MudItem>
+                <MudItem xs="12">
+                    <MudTextField Label="Set Description" @bind-Value="qnaSet.Description" Required="true" />
+                </MudItem>
+            </MudGrid>
+        </EditForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit">Ok</MudButton>
+    </DialogActions>
+</MudDialog>
+@code {
+    
+    private EditContext editContext;
+
+    [CascadingParameter]
+    private IMudDialogInstance MudDialog { get; set; }
+
+    [Parameter]
+    public QnASet qnaSet { get; set; } = new();
+
+    private async Task Submit() 
+    {
+        MudDialog.Close(DialogResult.Ok(qnaSet));
+    }
+    private void Cancel() => MudDialog.Cancel();
+
+	protected override async Task OnInitializedAsync()
+	{
+		editContext = new EditContext(qnaSet);
+	}
+}

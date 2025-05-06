@@ -44,8 +44,8 @@ namespace WASMFAQv2.Server.Repository
             {
                 throw new Exception($"QnASet with id {qnaSet.QnASetId} not found");
             }
-            
-            _context.Entry(existingQnASet).CurrentValues.SetValues(qnaSet);
+            if (qnaSet.Name != null) existingQnASet.Name = qnaSet.Name;
+            if (qnaSet.Description != null) existingQnASet.Description = qnaSet.Description;
 
             return await SaveChangesAsync();
         }

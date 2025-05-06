@@ -41,7 +41,7 @@ namespace WASMFAQv2.Server.Controllers
         }
 
         [HttpPut("qnasets")]
-        public async Task<IActionResult> UpdateQnASet(QnASet qnaSet)
+        public async Task<IActionResult> UpdateQnASet([FromBody] QnASet qnaSet)
         {
             if (await _qnaSetRepository.UpdateQnASetAsync(qnaSet))
             {

@@ -24,7 +24,6 @@ else if (qnaSets == null)
 else
 {
 	<MudThemeProvider IsDarkMode="true" />
-	<MudButton Color="Color.Primary" ButtonType="ButtonType.Submit" Variant="Variant.Filled" Href="/">Home</MudButton>
 
 	<MudGrid Justify="Justify.Center">
 		<MudItem xs="12" sm="6">
@@ -38,7 +37,8 @@ else
 			</MudCard>
 		</MudItem>
 	</MudGrid>
-	<hr />
+	<br />
+	<br />
 
 	<MudGrid Justify="Justify.Center">
 		@foreach (var qnaset in qnaSets)
@@ -46,37 +46,52 @@ else
 			<MudItem xs="12" sm="6">
 				<MudCard>
 					<MudCardHeader>
-						<MudButton Color="Color.Error" Variant="Variant.Filled" OnClick="@(() => DeleteQnASetAsync(qnaset.QnASetId))">
-							<MudIcon Icon="@Icons.Material.Filled.Delete" />Delete Set
-						</MudButton>
+						<MudGrid Justify="Justify.Center">
+							<MudButton Color="Color.Error" Variant="Variant.Filled" OnClick="@(() => DeleteQnASetAsync(qnaset.QnASetId))">
+								<MudIcon Icon="@Icons.Material.Filled.Delete" />
+							</MudButton>
+							<MudButton Color="Color.Success" Variant="Variant.Filled" OnClick="@(() => EditQnaSetAsync(qnaset))">
+								<MudIcon Icon="@Icons.Material.Filled.Edit" />
+							</MudButton>
+						</MudGrid>
+
 					</MudCardHeader>
 					<MudCardContent>
-						<MudTextField Label="Set Name" @bind-Value="qnaset.Name" Variant="Variant.Outlined" />
-						<MudTextField Label="Set Description" @bind-Value="qnaset.Description" />
+						<MudText Label="Set Name">@qnaset.Name</MudText>
+						<MudText Label="Set Description">@qnaset.Description</MudText>
 					</MudCardContent>
 				</MudCard>
 				<MudCard>
 					<MudCardHeader>
-						<MudText Typo="Typo.h3"><u>Questions:</u></MudText>	
+						<MudText Typo="Typo.h3"><u>Q&As:</u></MudText>	
 					</MudCardHeader>
 					<MudCardContent>
 						@foreach (var qna in qnaset.QnAs)
 						{
-							<br />
-							<MudText Typo="Typo.h5">@qna.Question</MudText>
-							<MudText>@qna.Answer</MudText>
-							<MudButton Color="Color.Error" Variant="Variant.Filled" OnClick="@(() => DeleteQnAAsync(qna.QnaId))">
-								<MudIcon Icon="@Icons.Material.Filled.Delete" /> Delete Q&A
-							</MudButton>
+							<MudGrid Justify="Justify.SpaceBetween">
+								<MudItem xs="12" sm="9">
+									<MudText Typo="Typo.h5">@qna.Question</MudText>
+									<MudText>@qna.Answer</MudText>
+								</MudItem>
+								<MudItem>
+									<MudButton Color="Color.Error" Variant="Variant.Filled" OnClick="@(() => DeleteQnAAsync(qna.QnaId))">
+										<MudIcon Icon="@Icons.Material.Filled.Delete" />
+									</MudButton>
+								</MudItem>
+
+							</MudGrid>
 							<br />
 						}
-						<MudButton Color="Color.Success" Variant="Variant.Filled" OnClick="@(() => CreateQnAAsync(qnaset.QnASetId))">
-							<MudIcon Icon="@Icons.Material.Filled.Add" /> Add Q&A
-						</MudButton>
+						<MudGrid Justify="Justify.Center">
+							<MudButton Color="Color.Success" Variant="Variant.Filled" OnClick="@(() => CreateQnAAsync(qnaset.QnASetId))">
+								<MudIcon Icon="@Icons.Material.Filled.Add" />
+							</MudButton>
+						</MudGrid>
 					</MudCardContent>
 				</MudCard>
 			</MudItem>
 		}
+
 	</MudGrid>
 
 	<br />
@@ -84,7 +99,10 @@ else
 	<br />
 	<MudGrid Justify="Justify.Center">
 		<MudButton Color="Color.Success" Variant="Variant.Filled" @onclick="CreateQnASetAsync">
-			Create New Set
+			<MudIcon Icon="@Icons.Material.Filled.Add" />
+		</MudButton>
+		<MudButton Color="Color.Primary" Variant="Variant.Filled" Href="/">
+			<MudIcon Icon="@Icons.Material.Filled.Home" />
 		</MudButton>
 	</MudGrid>
 	<style>
@@ -133,12 +151,49 @@ else
 
 	private async Task CreateQnASetAsync()
 	{
-		var qnaSet = new QnASet();
-		qnaSet.Name = "Name";
-		qnaSet.Description = "Description";
-		await FAQApiService.AddQnASetAsync(qnaSet);
-		await InitializeQnASets(); 
-		StateHasChanged(); 
+		await OpenQnASetCreateDialogAsync();
+	}
+
+	private async Task EditQnaSetAsync(QnASet qnaSet)
+	{
+		var parameters = new DialogParameters();
+		parameters.Add("qnaSet", qnaSet);
+		var options = new DialogOptions { BackgroundClass = "bg-blur" };
+		var dialog = await DialogService.ShowAsync<QnASetEditModal>("Edit Q&A Set", parameters, options);
+		var result = await dialog.Result;
+		if (!result.Canceled)
+		{
+			qnaSet = (QnASet)result.Data;
+			await FAQApiService.UpdateQnASetAsync(qnaSet);
+			await InitializeQnASets();
+			StateHasChanged();
+		}
+		else
+		{
+			Console.WriteLine("Dialog was cancelled");
+		}
+
+	}
+
+	private async Task OpenQnASetCreateDialogAsync()
+	{
+		var parameters = new DialogParameters();
+		parameters.Add("QnASet", new QnASet());
+		var options = new DialogOptions { BackgroundClass = "bg-blur" };
+		var dialog = await DialogService.ShowAsync<QnASetModal>("New Q&A Set", options);
+		var result = await dialog.Result;
+		if (!result.Canceled)
+		{
+			var qnaSet = (QnASet)result.Data;
+			await FAQApiService.AddQnASetAsync(qnaSet);
+			await InitializeQnASets();
+			StateHasChanged();
+		}
+		else
+		{
+			Console.WriteLine("Dialog was cancelled");
+		}
+		
 	}
 
 	private async Task CreateQnAAsync(int QnASetId)
@@ -151,10 +206,9 @@ else
 		var parameters = new DialogParameters();
 		parameters.Add("QnASetId", QnASetId);
 		parameters.Add("QnA", new QnA());
-		parameters.Add("FaqApiService", FAQApiService);
 		var options = new DialogOptions { BackgroundClass = "bg-blur" };
 
-		var dialog = await DialogService.ShowAsync<QuestionModal>("New Q&A", options);
+		var dialog = await DialogService.ShowAsync<QnAModal>("New Q&A", options);
 		var result = await dialog.Result;
 
 		if (!result.Canceled)
@@ -174,6 +228,7 @@ else
 	private async Task InitializeQnASets()
 	{
 		qnaSets = await FAQApiService.GetQnASetsAsync();
+		qnaSets = qnaSets.OrderBy(q => q.Name).ToList();
 		foreach (var qnaSet in qnaSets)
 		{
 			qnaSet.QnAs = await FAQApiService.GetQuestionsByQnASetIdAsync(qnaSet.QnASetId);

@@ -80,6 +80,8 @@ else
 			FAQApiService = ServiceProvider.GetRequiredService<IFAQApiService>();
 
 			qnaSets = await FAQApiService.GetQnASetsAsync();
+			qnaSets = qnaSets.OrderBy(q => q.Name).ToList();
+
 			foreach (var qnaSet in qnaSets)
 			{
 				qnaSet.QnAs = await FAQApiService.GetQuestionsByQnASetIdAsync(qnaSet.QnASetId);
