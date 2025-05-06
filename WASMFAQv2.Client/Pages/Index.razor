@@ -7,7 +7,7 @@
 <PageTitle>Home</PageTitle>
 @if (OperatingSystem.IsBrowser() == false)
 {
-	<p>Still rendering on the server</p>
+	<p>@AppStrings.Loading</p>
 }
 else if (qnaSets == null)
 {
@@ -15,7 +15,7 @@ else if (qnaSets == null)
 		<MudItem xs="12" sm="6">
 			<MudCard>
 				<MudCardHeader>
-					<MudText Typo="Typo.h5"><b>Loading...</b></MudText>
+					<MudText Typo="Typo.h5"><b>@AppStrings.Loading</b></MudText>
 				</MudCardHeader>
 			</MudCard>
 		</MudItem>
@@ -99,8 +99,8 @@ else
 			{
 				faq = new FAQ
 					{
-						Title = "FAQ",
-						Description = "Frequently Asked Questions"
+						Title = AppStrings.FAQDefaultTitle,
+						Description = AppStrings.FAQDefaultDescription
 					};
 				await FAQApiService.CreateFAQAsync(faq);
 			}

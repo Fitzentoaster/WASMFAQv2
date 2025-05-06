@@ -13,11 +13,11 @@ namespace WASMFAQv2.Client.Services
         }
         public async Task<List<QnASet>> GetQnASetsAsync()
         {
-            return await _httpClient.GetFromJsonAsync<List<QnASet>>("api/faq/qnasets");
+            return await _httpClient.GetFromJsonAsync<List<QnASet>>("api/faq/qnasets") ?? new List<QnASet>();
         }
         public async Task<QnASet> GetQnASetByIdAsync(int id)
         {
-            return await _httpClient.GetFromJsonAsync<QnASet>($"api/faq/qnasets/{id}");
+            return await _httpClient.GetFromJsonAsync<QnASet>($"api/faq/qnasets/{id}") ?? new QnASet();
         }
         public async Task<bool> AddQnASetAsync(QnASet qnaSet)
         {
@@ -36,7 +36,7 @@ namespace WASMFAQv2.Client.Services
         }
         public async Task<List<QnA>> GetQuestionsByQnASetIdAsync(int id)
         {
-            return await _httpClient.GetFromJsonAsync<List<QnA>>($"api/faq/qnasets/{id}/questions");
+            return await _httpClient.GetFromJsonAsync<List<QnA>>($"api/faq/qnasets/{id}/questions") ?? new List<QnA>();
         }
         public async Task<bool> DeleteQnAAsync(int id)
         {
@@ -60,7 +60,7 @@ namespace WASMFAQv2.Client.Services
         }
         public async Task<FAQ> GetFAQAsync()
         {
-            return await _httpClient.GetFromJsonAsync<FAQ>("api/faq/faq");
+            return await _httpClient.GetFromJsonAsync<FAQ>("api/faq/faq") ?? new FAQ();
         }
         public async Task<bool> NormalizeQnASetSortOrderAsync()
         {

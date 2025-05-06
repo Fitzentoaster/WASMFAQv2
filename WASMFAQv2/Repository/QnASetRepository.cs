@@ -2,6 +2,7 @@
 using WASMFAQv2.Shared.Models;
 using WASMFAQv2.Shared.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using WASMFAQv2.Resources;
 
 namespace WASMFAQv2.Server.Repository
 {
@@ -24,7 +25,7 @@ namespace WASMFAQv2.Server.Repository
 
             if (retValue == null)
             {
-                throw new Exception($"QnASet with id {id} not found");
+                throw new Exception(AppStrings.QnASetNotFound);
             }
 
             return retValue;
@@ -42,7 +43,7 @@ namespace WASMFAQv2.Server.Repository
                 .FirstOrDefaultAsync(q => q.QnASetId == qnaSet.QnASetId);
             if (existingQnASet == null)
             {
-                throw new Exception($"QnASet with id {qnaSet.QnASetId} not found");
+                throw new Exception(AppStrings.QnASetNotFound);
             }
             if (qnaSet.Name != null) existingQnASet.Name = qnaSet.Name;
             if (qnaSet.Description != null) existingQnASet.Description = qnaSet.Description;
@@ -58,7 +59,7 @@ namespace WASMFAQv2.Server.Repository
 
             if (qnaSet == null)
             {
-                throw new Exception($"QnASet with id {id} not found");
+                throw new Exception(AppStrings.QnASetNotFound);
             }
 
             _context.QnASets.Remove(qnaSet);
@@ -76,7 +77,7 @@ namespace WASMFAQv2.Server.Repository
                 .ToListAsync();
             if (qnas == null)
             {
-                throw new Exception($"QnAs with QnASetId {id} not found");
+                throw new Exception(AppStrings.QnASetNotFound);
             }
             return await qnas;
         }
@@ -87,21 +88,27 @@ namespace WASMFAQv2.Server.Repository
                 .FirstOrDefaultAsync(q => q.QnaId == id);
             if (qna == null)
             {
-                throw new Exception($"QnA with id {id} not found");
+                throw new Exception(AppStrings.QnANotFound);
             }
             _context.QnAs.Remove(qna);
             return await SaveChangesAsync();
         }
-
         public async Task<bool> AddQnAAsync(QnA qna)
         {
             var qnaSet = await _context.QnASets
                 .Include(q => q.QnAs)
                 .FirstOrDefaultAsync(q => q.QnASetId == qna.QnASetId);
+
             if (qnaSet == null)
             {
-                throw new Exception($"QnASet with id {qna.QnASetId} not found");
+                throw new Exception(AppStrings.QnASetNotFound);
             }
+
+            if (qnaSet.QnAs == null)
+            {
+                qnaSet.QnAs = new List<QnA>();
+            }
+
             qnaSet.QnAs.Add(qna);
             return await SaveChangesAsync();
         }
@@ -111,7 +118,7 @@ namespace WASMFAQv2.Server.Repository
                 .FirstOrDefaultAsync(q => q.QnaId == qna.QnaId);
             if (existingQnA == null)
             {
-                throw new Exception($"QnA with id {qna.QnaId} not found");
+                throw new Exception(AppStrings.QnANotFound);
             }
             _context.Entry(existingQnA).CurrentValues.SetValues(qna);
             return await SaveChangesAsync();
@@ -122,8 +129,9 @@ namespace WASMFAQv2.Server.Repository
                 .FirstOrDefaultAsync();
             if (faq == null)
             {
-                faq.Title = "FAQ";
-                faq.Description = "Frequently Asked Questions";
+                faq = new FAQ();
+                faq.Title = AppStrings.FAQDefaultTitle;
+                faq.Description = AppStrings.FAQDefaultDescription;
             }
             return faq;
         }
@@ -147,7 +155,7 @@ namespace WASMFAQv2.Server.Repository
 
             foreach (var set in sets)
             {
-                var qnas = set.QnAs.OrderBy(q => q.SortOrder).ToList();
+                var qnas = (set.QnAs ?? Enumerable.Empty<QnA>()).OrderBy(q => q.SortOrder).ToList();
                 for (int i = 0; i < qnas.Count; i++)
                 {
                     qnas[i].SortOrder = i;
@@ -163,7 +171,7 @@ namespace WASMFAQv2.Server.Repository
                 .FirstOrDefaultAsync();
             if (existingFAQ == null)
             {
-                throw new Exception($"FAQ not found");
+                throw new Exception(AppStrings.FAQNotFound);
             }
             _context.Entry(existingFAQ).CurrentValues.SetValues(faq);
             return await SaveChangesAsync();
@@ -174,7 +182,7 @@ namespace WASMFAQv2.Server.Repository
                 .FirstOrDefaultAsync();
             if (existingFAQ != null)
             {
-                throw new Exception($"FAQ already exists");
+                throw new Exception(AppStrings.FAQAlreadyExists);
             }
             _context.FAQs.Add(faq);
             return await SaveChangesAsync();

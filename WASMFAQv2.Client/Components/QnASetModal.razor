@@ -1,6 +1,6 @@
 ﻿<MudDialog>
     <TitleContent>
-        New Q&A Set
+        @AppStrings.NewQnASet
     </TitleContent>
     <DialogContent>
         <EditForm EditContext="editContext">
@@ -8,17 +8,17 @@
             <ValidationSummary />
             <MudGrid>
                 <MudItem xs="12">
-                    <MudTextField Label="Set Name" @bind-Value="qnaSet.Name" Required="true" />
+                    <MudTextField Label="@AppStrings.Name" @bind-Value="qnaSet.Name" Required="true" />
                 </MudItem>
                 <MudItem xs="12">
-                    <MudTextField Label="Set Description" @bind-Value="qnaSet.Description" Required="true" />
+                    <MudTextField Label="@AppStrings.Description" @bind-Value="qnaSet.Description" Required="true" />
                 </MudItem>
             </MudGrid>
         </EditForm>
     </DialogContent>
     <DialogActions>
-        <MudButton OnClick="Cancel">Cancel</MudButton>
-        <MudButton Color="Color.Primary" OnClick="Submit">Ok</MudButton>
+        <MudButton OnClick="Cancel">@AppStrings.Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit">@AppStrings.OK</MudButton>
     </DialogActions>
 </MudDialog>
 @code {

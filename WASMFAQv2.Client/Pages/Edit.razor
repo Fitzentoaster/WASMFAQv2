@@ -7,7 +7,7 @@
 <PageTitle>Edit</PageTitle>
 @if (OperatingSystem.IsBrowser() == false)
 {
-	<p>Still rendering on the server</p>
+	<p>@AppStrings.Loading</p>
 }
 else if (qnaSets == null)
 {
@@ -15,7 +15,7 @@ else if (qnaSets == null)
 		<MudItem xs="12" sm="6">
 			<MudCard>
 				<MudCardHeader>
-					<MudText Typo="Typo.h5"><b>Loading...</b></MudText>
+					<MudText Typo="Typo.h5"><b>@AppStrings.Loading</b></MudText>
 				</MudCardHeader>
 			</MudCard>
 		</MudItem>
@@ -30,11 +30,11 @@ else
 			<MudGrid Justify="Justify.Center">
 				<MudButton Color="Color.Success" Variant="Variant.Filled" @onclick="CreateQnASetAsync">
 					<MudIcon Icon="@Icons.Material.Filled.Add" />
-					Add Q&A Set
+					@AppStrings.NewQnASet
 				</MudButton>
 				<MudButton Color="Color.Primary" Variant="Variant.Filled" Href="/">
 					<MudIcon Icon="@Icons.Material.Filled.Home" />
-					Go Home
+					@AppStrings.Home
 				</MudButton>
 			</MudGrid>
 		</MudAppBar>
@@ -86,8 +86,8 @@ else
 							</MudGrid>
 						</MudCardHeader>
 						<MudCardContent>
-							<MudText Label="Set Name" Typo="Typo.h4"><u>@qnaSet.Name</u></MudText>
-							<MudText Label="Set Description" Typo="Typo.h6">@qnaSet.Description</MudText>
+							<MudText Label="@AppStrings.Name" Typo="Typo.h4"><u>@qnaSet.Name</u></MudText>
+							<MudText Label="@AppStrings.Description" Typo="Typo.h6">@qnaSet.Description</MudText>
 						</MudCardContent>
 					</MudCard>
 					<MudCard>
@@ -173,7 +173,7 @@ else
 	private async Task DeleteQnAAsync(int qnaId)
 	{
 		var options = new DialogOptions { BackgroundClass = "bg-blur" };
-		var dialog = await DialogService.ShowAsync<ConfirmDeleteModal>("Confirm Delete", options);
+		var dialog = await DialogService.ShowAsync<ConfirmDeleteModal>(@AppStrings.ConfirmDelete, options);
 		var result = await dialog.Result;
 
 		if (result is not null && !result.Canceled)
@@ -187,7 +187,7 @@ else
 	private async Task DeleteQnASetAsync(int qnaSetId)
 	{
 		var options = new DialogOptions { BackgroundClass = "bg-blur" };
-		var dialog = await DialogService.ShowAsync<ConfirmDeleteModal>("Confirm Delete", options);
+		var dialog = await DialogService.ShowAsync<ConfirmDeleteModal>(AppStrings.ConfirmDelete, options);
 		var result = await dialog.Result;
 
 		if (result is not null && !result.Canceled)
@@ -196,11 +196,6 @@ else
 			await InitializeQnASets();
 			StateHasChanged();
 		}
-		else
-		{
-			Console.WriteLine("Dialog was cancelled.");
-		}
-
 	}
 
 	private async Task EditQnaSetAsync(QnASet qnaSet)
@@ -208,7 +203,7 @@ else
 		var parameters = new DialogParameters();
 		parameters.Add("qnaSet", qnaSet);
 		var options = new DialogOptions { BackgroundClass = "bg-blur" };
-		var dialog = await DialogService.ShowAsync<QnASetEditModal>("Edit Q&A Set", parameters, options);
+		var dialog = await DialogService.ShowAsync<QnASetEditModal>(AppStrings.EditQnASet, parameters, options);
 		var result = await dialog.Result;
 		if (result is not null && !result.Canceled)
 		{
@@ -223,11 +218,6 @@ else
 				StateHasChanged();
 			}
 		}
-		else
-		{
-			Console.WriteLine("Dialog was cancelled");
-		}
-
 	}
 
 	private async Task CreateQnASetAsync()
@@ -235,7 +225,7 @@ else
 		var parameters = new DialogParameters();
 		parameters.Add("QnASet", new QnASet());
 		var options = new DialogOptions { BackgroundClass = "bg-blur" };
-		var dialog = await DialogService.ShowAsync<QnASetModal>("New Q&A Set", parameters, options);
+		var dialog = await DialogService.ShowAsync<QnASetModal>(AppStrings.NewQnASet, parameters, options);
 		var result = await dialog.Result;
 		if (result is not null && !result.Canceled && result.Data is QnASet qnaSet)
 		{
@@ -259,7 +249,7 @@ else
 				MaxWidth = MaxWidth.Large,
 				FullWidth = true
 			};
-		var dialog = await DialogService.ShowAsync<QnAModal>("New Q&A", parameters, options);
+		var dialog = await DialogService.ShowAsync<QnAModal>(AppStrings.NewQnA, parameters, options);
 		var result = await dialog.Result;
 
 		if (result is not null && !result.Canceled && result.Data is QnA qna)
@@ -270,10 +260,6 @@ else
 			await FAQApiService.NormalizeQnASortOrderAsync();
 			await InitializeQnASets();
 			StateHasChanged();
-		}
-		else
-		{
-			Console.WriteLine("Dialog was cancelled");
 		}
 	}
 
@@ -288,7 +274,7 @@ else
 				MaxWidth = MaxWidth.Large,
 				FullWidth = true
 			}; 
-		var dialog = await DialogService.ShowAsync<QnAEditModal>("Edit Q&A", parameters, options);
+		var dialog = await DialogService.ShowAsync<QnAEditModal>(AppStrings.EditQnA, parameters, options);
 		var result = await dialog.Result;
 		if (result is not null && !result.Canceled && result.Data is QnA updated)
 		{
@@ -299,10 +285,6 @@ else
 			await InitializeQnASets();
 			StateHasChanged();
 		}
-		else
-		{
-			Console.WriteLine("Dialog was cancelled");
-		}
 	}
 
 	private async Task EditFAQAsync(FAQ faq)
@@ -310,16 +292,12 @@ else
 		var parameters = new DialogParameters();
 		parameters.Add("faq", faq);
 		var options = new DialogOptions { BackgroundClass = "bg-blur" };
-		var dialog = await DialogService.ShowAsync<FAQEditModal>("Edit FAQ Data", parameters, options);
+		var dialog = await DialogService.ShowAsync<FAQEditModal>(AppStrings.EditModalTitle, parameters, options);
 		var result = await dialog.Result;
 		if (result is not null && !result.Canceled && result.Data is FAQ updated)
 		{
 			await FAQApiService.UpdateFAQAsync(updated);
 			StateHasChanged();
-		}
-		else
-		{
-			Console.WriteLine("Dialog was cancelled");
 		}
 	}
 

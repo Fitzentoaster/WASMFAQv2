@@ -1,5 +1,6 @@
 ﻿using WASMFAQv2.Shared.Models;
 using Microsoft.EntityFrameworkCore;
+using WASMFAQv2.Resources;
 
 namespace WASMFAQv2.Server.Contexts
 {
@@ -22,8 +23,8 @@ namespace WASMFAQv2.Server.Contexts
                 new FAQ
                 {
                     FAQId = 1,
-                    Title = "FAQ",
-                    Description = "Description"
+                    Title = AppStrings.FAQDefaultTitle,
+                    Description = AppStrings.FAQDefaultDescription
                 }
             );
         }

@@ -2,7 +2,7 @@
 
 <MudDialog>
     <TitleContent>
-        Edit FAQ Name and Description
+        @AppStrings.EditModalTitle
     </TitleContent>
     <DialogContent>
         <EditForm EditContext="editContext">
@@ -10,17 +10,17 @@
             <ValidationSummary />
             <MudGrid>
                 <MudItem xs="12">
-                    <MudTextField Label="FAQ Title" @bind-Value="faq.Title" Required="true" />
+                    <MudTextField Label="@AppStrings.Title" @bind-Value="faq.Title" Required="true" />
                 </MudItem>
                 <MudItem xs="12">
-                    <MudTextField Label="FAQ Description" @bind-Value="faq.Description" Required="true" />
+                    <MudTextField Label="@AppStrings.Description" @bind-Value="faq.Description" Required="true" />
                 </MudItem>
             </MudGrid>
         </EditForm>
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">Cancel</MudButton>
-        <MudButton Color="Color.Primary" OnClick="Submit">Ok</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit">@AppStrings.OK</MudButton>
     </DialogActions>
 </MudDialog>
 

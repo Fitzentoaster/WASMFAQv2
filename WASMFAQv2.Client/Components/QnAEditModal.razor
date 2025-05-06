@@ -2,7 +2,7 @@
 
 <MudDialog style="min-height: 600px;">
     <TitleContent>
-        New Q&A
+        @AppStrings.EditQnA
     </TitleContent>
     <DialogContent>
         <EditForm EditContext="editContext">
@@ -10,17 +10,17 @@
             <ValidationSummary />
             <MudGrid>
                 <MudItem xs="12">
-                    <MudTextField Label="Question" @bind-Value="qna.Question" Required="true" />
+                    <MudTextField Label="@AppStrings.Question" @bind-Value="qna.Question" Required="true" />
                 </MudItem>
             </MudGrid>
         </EditForm>
         <hr />
         <MudGrid>
             <MudItem xs="12">
-                <MudText Typo="Typo.h6">Answer</MudText>
+                <MudText Typo="Typo.h6">@AppStrings.Answer</MudText>
             </MudItem>
             <MudItem xs="12">
-                <MudText Typo="Typo.body2">Use the editor below to format your answer.</MudText>
+                <MudText Typo="Typo.body2">@AppStrings.UseTheEditor</MudText>
             </MudItem>
         </MudGrid>
         <MudItem xs="12">
@@ -71,8 +71,8 @@
         </MudItem>
     </DialogContent>
     <DialogActions>
-        <MudButton OnClick="Cancel">Cancel</MudButton>
-        <MudButton Color="Color.Primary" OnClick="Submit">Ok</MudButton>
+        <MudButton OnClick="Cancel">@AppStrings.Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit">@AppStrings.OK</MudButton>
     </DialogActions>
 </MudDialog>
 @code {
