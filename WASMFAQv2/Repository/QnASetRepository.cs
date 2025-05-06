@@ -70,7 +70,7 @@ namespace WASMFAQv2.Server.Repository
         }
 
         public async Task<List<QnA>> GetQuestionsByQnASetIdAsync(int id)
-        { 
+        {
             var qnas = _context.QnAs
                 .Where(q => q.QnASetId == id)
                 .ToListAsync();
@@ -125,6 +125,36 @@ namespace WASMFAQv2.Server.Repository
                 throw new Exception($"FAQ not found");
             }
             return faq;
+        }
+        public async Task<bool> NormalizeQnASetSortOrderAsync()
+        {
+            var qnaSets = await _context.QnASets
+                .OrderBy(q => q.SortOrder)
+                .ToListAsync();
+            for (int i = 0; i < qnaSets.Count; i++)
+            {
+                qnaSets[i].SortOrder = i + 1;
+            }
+            _context.QnASets.UpdateRange(qnaSets);
+            return await SaveChangesAsync();
+        }
+        public async Task<bool> NormalizeQnASortOrderAsync()
+        {
+            var sets = await _context.QnASets
+                .Include(s => s.QnAs)
+                .ToListAsync();
+
+            foreach (var set in sets)
+            {
+                var qnas = set.QnAs.OrderBy(q => q.SortOrder).ToList();
+                for (int i = 0; i < qnas.Count; i++)
+                {
+                    qnas[i].SortOrder = i;
+                }
+            }
+
+            await _context.SaveChangesAsync();
+            return true;
         }
     }
 }

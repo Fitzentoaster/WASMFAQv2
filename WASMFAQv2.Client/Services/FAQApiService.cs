@@ -62,4 +62,15 @@ namespace WASMFAQv2.Client.Services
         {
             return await _httpClient.GetFromJsonAsync<FAQ>("api/faq");
         }
+        public async Task<bool> NormalizeQnASetSortOrderAsync()
+        {
+            var response = await _httpClient.PostAsync("api/faq/qnasets/normalize-sort-order", null);
+            return response.IsSuccessStatusCode;
+        }
+        public async Task<bool> NormalizeQnASortOrderAsync()
+        {
+            var response = await _httpClient.PostAsync("api/faq/qnasets/questions/normalize-sort-order", null);
+            return response.IsSuccessStatusCode;
+        }
+    }
 }

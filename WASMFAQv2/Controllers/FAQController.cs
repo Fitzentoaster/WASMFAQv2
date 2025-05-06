@@ -95,12 +95,29 @@ namespace WASMFAQv2.Server.Controllers
             }
             return BadRequest();
         }
-        //Get FAQ
         [HttpGet("faq")]
         public async Task<IActionResult> GetFAQ()
         {
             var faq = await _qnaSetRepository.GetFAQAsync();
             return Ok(faq);
+        }
+        [HttpPost("qnasets/normalize-sort-order")]
+        public async Task<IActionResult> NormalizeQnASetSortOrder()
+        {
+            if (await _qnaSetRepository.NormalizeQnASetSortOrderAsync())
+            {
+                return NoContent();
+            }
+            return BadRequest();
+        }
+        [HttpPost("qnasets/questions/normalize-sort-order")]
+        public async Task<IActionResult> NormalizeQnASortOrder()
+        {
+            if (await _qnaSetRepository.NormalizeQnASortOrderAsync())
+            {
+                return NoContent();
+            }
+            return BadRequest();
         }
     }
 }

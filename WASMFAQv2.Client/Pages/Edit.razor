@@ -39,36 +39,37 @@ else
 	</MudGrid>
 	<br />
 	<br />
-	
-	
+
+
 	<br />
 	<br />
 	<MudGrid Justify="Justify.Center">
-		@foreach (var qnaset in qnaSets)
+		@foreach (var qnaSet in qnaSets)
 		{
 			<MudItem xs="12" sm="8">
 				<MudCard>
 					<MudCardHeader Class="pe-0 ps-6">
 						<MudGrid Justify="Justify.FlexStart">
-							<MudButton Color="Color.Error" Variant="Variant.Filled" OnClick="@(() => DeleteQnASetAsync(qnaset.QnASetId))">
+							<MudButton Color="Color.Tertiary" Variant="Variant.Filled" OnClick="@(() => MoveQnASetUp(qnaSet))">
+								<MudIcon Icon="@Icons.Material.Filled.ArrowCircleUp" />
+							</MudButton>
+							<MudButton Color="Color.Tertiary" Variant="Variant.Filled" OnClick="@(() => MoveQnASetDown(qnaSet))">
+								<MudIcon Icon="@Icons.Material.Filled.ArrowCircleDown" />
+							</MudButton>
+						</MudGrid>
+						<MudGrid Justify="Justify.FlexEnd">
+
+							<MudButton Color="Color.Error" Variant="Variant.Filled" OnClick="@(() => DeleteQnASetAsync(qnaSet.QnASetId))">
 								<MudIcon Icon="@Icons.Material.Filled.Delete" />
 							</MudButton>
-							<MudButton Color="Color.Success" Variant="Variant.Filled" OnClick="@(() => EditQnaSetAsync(qnaset))">
+							<MudButton Color="Color.Success" Variant="Variant.Filled" OnClick="@(() => EditQnaSetAsync(qnaSet))">
 								<MudIcon Icon="@Icons.Material.Filled.Edit" />
 							</MudButton>
 						</MudGrid>
-							<MudGrid Justify="Justify.FlexEnd">
-								<MudButton Color="Color.Tertiary" Variant="Variant.Filled" OnClick="@(() => MoveQnASetUp(qnaset))">
-									<MudIcon Icon="@Icons.Material.Filled.ArrowCircleUp" />
-								</MudButton>
-								<MudButton Color="Color.Tertiary" Variant="Variant.Filled" OnClick="@(() => MoveQnASetDown(qnaset))">
-									<MudIcon Icon="@Icons.Material.Filled.ArrowCircleDown" />
-								</MudButton>
-							</MudGrid>
 					</MudCardHeader>
 					<MudCardContent>
-						<MudText Label="Set Name" Typo="Typo.h4"><u>@qnaset.Name</u></MudText>
-						<MudText Label="Set Description" Typo="Typo.h6">@qnaset.Description</MudText>
+						<MudText Label="Set Name" Typo="Typo.h4"><u>@qnaSet.Name</u></MudText>
+						<MudText Label="Set Description" Typo="Typo.h6">@qnaSet.Description</MudText>
 					</MudCardContent>
 				</MudCard>
 				<MudCard>
@@ -76,21 +77,21 @@ else
 						<MudText Typo="Typo.h6">Q&As:</MudText>	
 					</MudCardHeader>
 					<MudCardContent>
-						@foreach (var qna in qnaset.QnAs)
+						@foreach (var qna in qnaSet.QnAs)
 						{
 							<MudGrid Justify="Justify.SpaceBetween">
 								<MudItem xs="2" md="1">
-									<MudButton Color="Color.Tertiary" Variant="Variant.Filled" OnClick="@(() => MoveQnAUp(qna, qnaset))">
+									<MudButton Color="Color.Tertiary" Variant="Variant.Filled" OnClick="@(() => MoveQnAUp(qna, qnaSet))">
 										<MudIcon Icon="@Icons.Material.Filled.ArrowCircleUp" />
 									</MudButton>
 								</MudItem>
 								<MudItem xs="2" md="1">
-									<MudButton Color="Color.Tertiary" Variant="Variant.Filled" OnClick="@(() => MoveQnADown(qna, qnaset))">
+									<MudButton Color="Color.Tertiary" Variant="Variant.Filled" OnClick="@(() => MoveQnADown(qna, qnaSet))">
 										<MudIcon Icon="@Icons.Material.Filled.ArrowCircleDown" />
 									</MudButton>
 								</MudItem>
 								<MudItem xs="12" sm="4" md="8">
-									<MudText Typo="Typo.h5">@qna.Question</MudText>
+									<MudText Typo="Typo.h5">@qna.Question : @qna.SortOrder</MudText>
 									<MudText>@qna.Answer</MudText>
 								</MudItem>
 								<MudItem xs="2" md="1">
@@ -108,7 +109,7 @@ else
 							<br />
 						}
 						<MudGrid Justify="Justify.Center">
-							<MudButton Color="Color.Success" Variant="Variant.Filled" OnClick="@(() => CreateQnAAsync(qnaset.QnASetId))">
+							<MudButton Color="Color.Success" Variant="Variant.Filled" OnClick="@(() => CreateQnAAsync(qnaSet.QnASetId))">
 								<MudIcon Icon="@Icons.Material.Filled.Add" />
 							</MudButton>
 						</MudGrid>
@@ -147,7 +148,8 @@ else
 		if (firstRender && OperatingSystem.IsBrowser())
 		{
 			FAQApiService = ServiceProvider.GetRequiredService<IFAQApiService>();
-
+			await FAQApiService.NormalizeQnASetSortOrderAsync();
+			await FAQApiService.NormalizeQnASortOrderAsync();
 			qnaSets = await FAQApiService.GetQnASetsAsync();
 			foreach (var qnaSet in qnaSets)
 			{
@@ -207,6 +209,7 @@ else
 			var qnaSet = (QnASet)result.Data;
 			qnaSet.SortOrder = qnaSets.Count + 1;
 			await FAQApiService.AddQnASetAsync(qnaSet);
+			await FAQApiService.NormalizeQnASetSortOrderAsync();
 			await InitializeQnASets();
 			StateHasChanged();
 		}
@@ -233,6 +236,7 @@ else
 			qna.QnASetId = QnASetId;
 			qna.SortOrder = qnaSets.FirstOrDefault(q => q.QnASetId == QnASetId)?.QnAs.Count + 1 ?? 1;
 			await FAQApiService.AddQnAAsync(qna);
+			await FAQApiService.NormalizeQnASortOrderAsync();
 			await InitializeQnASets();
 			StateHasChanged();
 		}
@@ -265,7 +269,7 @@ else
 	private async Task MoveQnASetUp(QnASet qnaSet)
 	{
 		var ordered = qnaSets.OrderBy(q => q.SortOrder).ToList();
-		var index = ordered.IndexOf(qnaSet);
+		var index = ordered.FindIndex(q => q.QnASetId == qnaSet.QnASetId);
 		if (index <= 0) return;
 
 		var above = ordered[index - 1];
@@ -276,14 +280,14 @@ else
 
 		await FAQApiService.UpdateQnASetAsync(qnaSet);
 		await FAQApiService.UpdateQnASetAsync(above);
-		await InitializeQnASets();
+		qnaSets = qnaSets.OrderBy(q => q.SortOrder).ToList();
 		StateHasChanged();
 	}
 
 	private async Task MoveQnASetDown(QnASet qnaSet)
 	{
 		var ordered = qnaSets.OrderBy(q => q.SortOrder).ToList();
-		var index = ordered.IndexOf(qnaSet);
+		var index = ordered.FindIndex(q => q.QnASetId == qnaSet.QnASetId);
 		if (index < 0 || index >= ordered.Count - 1) return;
 
 		var below = ordered[index + 1];
@@ -294,29 +298,32 @@ else
 
 		await FAQApiService.UpdateQnASetAsync(qnaSet);
 		await FAQApiService.UpdateQnASetAsync(below);
-		await InitializeQnASets();
+		qnaSets = qnaSets.OrderBy(q => q.SortOrder).ToList();
+		StateHasChanged();
 	}
 
 	private async Task MoveQnAUp(QnA qna, QnASet qnaSet)
 	{
-		var index = qnaSet.QnAs.OrderBy(q => q.SortOrder).ToList().IndexOf(qna);
+		var ordered = qnaSet.QnAs.OrderBy(q => q.SortOrder).ToList();
+		var index = ordered.FindIndex(q => q.QnaId == qna.QnaId);
 		if (index <= 0) return;
-
-		var qnaAbove = qnaSet.QnAs.OrderBy(q => q.SortOrder).ElementAt(index - 1);
+		var above = ordered[index - 1];
 
 		int temp = qna.SortOrder;
-		qna.SortOrder = qnaAbove.SortOrder;
-		qnaAbove.SortOrder = temp;
+		qna.SortOrder = above.SortOrder;
+		above.SortOrder = temp;
 
 		await FAQApiService.UpdateQnAAsync(qna);
-		await FAQApiService.UpdateQnAAsync(qnaAbove);
-		await InitializeQnASets();
+		await FAQApiService.UpdateQnAAsync(above);
+		await FAQApiService.NormalizeQnASortOrderAsync();
+		qnaSet.QnAs = qnaSet.QnAs.OrderBy(q => q.SortOrder).ToList();
+		StateHasChanged();
 	}
 
 	private async Task MoveQnADown(QnA qna, QnASet qnaSet)
 	{
 		var ordered = qnaSet.QnAs.OrderBy(q => q.SortOrder).ToList();
-		var index = ordered.IndexOf(qna);
+		var index = ordered.FindIndex(q => q.QnaId == qna.QnaId);
 		if (index < 0 || index >= ordered.Count - 1) return;
 
 		var below = ordered[index + 1];
@@ -327,7 +334,8 @@ else
 
 		await FAQApiService.UpdateQnAAsync(qna);
 		await FAQApiService.UpdateQnAAsync(below);
-		await InitializeQnASets();
+		await FAQApiService.NormalizeQnASortOrderAsync();
+		qnaSet.QnAs = qnaSet.QnAs.OrderBy(q => q.SortOrder).ToList();
 		StateHasChanged();
 	}
 

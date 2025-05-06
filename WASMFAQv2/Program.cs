@@ -16,9 +16,12 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll",
-        builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+    options.AddPolicy("ClientAppPolicy", policy =>
+        policy.WithOrigins("https://localhost:5001") 
+              .AllowAnyHeader()
+              .AllowAnyMethod());
 });
+
 
 builder.Services.AddScoped<IQnASetRepository, QnASetRepository>();
 
