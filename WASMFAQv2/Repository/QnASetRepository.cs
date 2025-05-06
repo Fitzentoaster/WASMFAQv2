@@ -116,5 +116,15 @@ namespace WASMFAQv2.Server.Repository
             _context.Entry(existingQnA).CurrentValues.SetValues(qna);
             return await SaveChangesAsync();
         }
+        public async Task<FAQ> GetFAQAsync()
+        {
+            var faq = await _context.FAQs
+                .FirstOrDefaultAsync();
+            if (faq == null)
+            {
+                throw new Exception($"FAQ not found");
+            }
+            return faq;
+        }
     }
 }

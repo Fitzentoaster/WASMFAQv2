@@ -43,16 +43,28 @@ else
 		<MudGrid Justify="Justify.Center">
 			<MudItem xs="12" sm="6">
 				<MudExpansionPanels MultiExpansion="true" Elevation="3">
-					<MudExpansionPanel Text="@qnaSet.Name">
-						<MudText Typo="Typo.h6">@qnaSet.Description</MudText>
+					<MudExpansionPanel>
+						<TitleContent>
+							<MudText Typo="Typo.h5"><b>@qnaSet.Name</b></MudText>
+						</TitleContent>
+						<ChildContent>
+							<MudText Typo="Typo.body1">@qnaSet.Description</MudText>
+
 						<MudExpansionPanels MultiExpansion="true">
 							@foreach (var qna in qnaSet.QnAs)
 							{
-								<MudExpansionPanel Text="@qna.Question">
-									<MudText>@qna.Answer</MudText>
+								<MudExpansionPanel>
+									<TitleContent>
+										<MudText Typo="Typo.h6">@qna.Question</MudText>
+									</TitleContent>
+									<ChildContent>
+										<MudText Typo="Typo.body1">@qna.Answer</MudText>
+
+									</ChildContent>
 								</MudExpansionPanel>
 							}
 						</MudExpansionPanels>
+						</ChildContent>
 					</MudExpansionPanel>
 				</MudExpansionPanels>
 			</MudItem>

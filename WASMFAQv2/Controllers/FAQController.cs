@@ -95,5 +95,12 @@ namespace WASMFAQv2.Server.Controllers
             }
             return BadRequest();
         }
+        //Get FAQ
+        [HttpGet("faq")]
+        public async Task<IActionResult> GetFAQ()
+        {
+            var faq = await _qnaSetRepository.GetFAQAsync();
+            return Ok(faq);
+        }
     }
 }

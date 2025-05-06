@@ -10,6 +10,7 @@ namespace WASMFAQv2.Server.Contexts
         }
         public DbSet<QnASet> QnASets { get; set; }
         public DbSet<QnA> QnAs { get; set; }
+        public DbSet<FAQ> FAQs { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<QnASet>()

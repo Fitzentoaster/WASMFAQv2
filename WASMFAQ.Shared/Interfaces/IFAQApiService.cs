@@ -14,5 +14,6 @@ namespace WASMFAQv2.Shared.Interfaces
         Task<bool> AddQnAAsync(QnA qna);
         Task<bool> SaveChanges();
         Task<bool> UpdateQnAAsync(QnA qna);
+        Task<FAQ> GetFAQAsync();
     }
 }

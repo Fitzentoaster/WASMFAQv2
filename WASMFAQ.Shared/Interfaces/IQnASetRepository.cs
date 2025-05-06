@@ -14,6 +14,7 @@ namespace WASMFAQv2.Shared.Interfaces
         Task<bool> DeleteQnAAsync(int id);
         Task<bool> AddQnAAsync(QnA qna);
         Task<bool> UpdateQnAAsync(QnA qna);
+        Task<FAQ> GetFAQAsync();
 
     }
 }

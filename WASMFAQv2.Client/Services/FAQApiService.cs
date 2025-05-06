@@ -58,5 +58,8 @@ namespace WASMFAQv2.Client.Services
             var response = await _httpClient.PutAsJsonAsync($"api/faq/qnasets/questions/{qna.QnaId}", qna);
             return response.IsSuccessStatusCode;
         }
-    }
+        public async Task<FAQ> GetFAQAsync()
+        {
+            return await _httpClient.GetFromJsonAsync<FAQ>("api/faq");
+        }
 }
