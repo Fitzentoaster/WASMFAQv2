@@ -38,8 +38,6 @@
 
     private async Task Submit() 
     {
-		qna.QnASetId = QnASetId;
-
         MudDialog.Close(DialogResult.Ok(qna));
     }
     private void Cancel() => MudDialog.Cancel();

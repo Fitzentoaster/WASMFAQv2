@@ -77,6 +77,9 @@ else
 									<MudButton Color="Color.Error" Variant="Variant.Filled" OnClick="@(() => DeleteQnAAsync(qna.QnaId))">
 										<MudIcon Icon="@Icons.Material.Filled.Delete" />
 									</MudButton>
+									<MudButton Color="Color.Success" Variant="Variant.Filled" OnClick="@(() => EditQnAAsync(qna))">
+										<MudIcon Icon="@Icons.Material.Filled.Edit" />
+									</MudButton>
 								</MudItem>
 
 							</MudGrid>
@@ -180,7 +183,7 @@ else
 		var parameters = new DialogParameters();
 		parameters.Add("QnASet", new QnASet());
 		var options = new DialogOptions { BackgroundClass = "bg-blur" };
-		var dialog = await DialogService.ShowAsync<QnASetModal>("New Q&A Set", options);
+		var dialog = await DialogService.ShowAsync<QnASetModal>("New Q&A Set", parameters, options);
 		var result = await dialog.Result;
 		if (!result.Canceled)
 		{
@@ -193,7 +196,7 @@ else
 		{
 			Console.WriteLine("Dialog was cancelled");
 		}
-		
+
 	}
 
 	private async Task CreateQnAAsync(int QnASetId)
@@ -208,7 +211,7 @@ else
 		parameters.Add("QnA", new QnA());
 		var options = new DialogOptions { BackgroundClass = "bg-blur" };
 
-		var dialog = await DialogService.ShowAsync<QnAModal>("New Q&A", options);
+		var dialog = await DialogService.ShowAsync<QnAModal>("New Q&A", parameters, options);
 		var result = await dialog.Result;
 
 		if (!result.Canceled)
@@ -225,6 +228,27 @@ else
 		}
 	}
 
+	private async Task EditQnAAsync(QnA qna)
+	{
+		var parameters = new DialogParameters();
+		parameters.Add("qna", qna);
+		var options = new DialogOptions { BackgroundClass = "bg-blur" };
+		var dialog = await DialogService.ShowAsync<QnAEditModal>("Edit Q&A", parameters, options);
+		var result = await dialog.Result;
+		if (!result.Canceled)
+		{
+			qna = (QnA)result.Data;
+			await FAQApiService.UpdateQnAAsync(qna);
+			await InitializeQnASets();
+			StateHasChanged();
+		}
+		else
+		{
+			Console.WriteLine("Dialog was cancelled");
+		}
+		
+	}
+
 	private async Task InitializeQnASets()
 	{
 		qnaSets = await FAQApiService.GetQnASetsAsync();
@@ -232,6 +256,8 @@ else
 		foreach (var qnaSet in qnaSets)
 		{
 			qnaSet.QnAs = await FAQApiService.GetQuestionsByQnASetIdAsync(qnaSet.QnASetId);
+			qnaSets = qnaSets.OrderBy(q => q.Name).ToList();
+
 		}
 	}
 
