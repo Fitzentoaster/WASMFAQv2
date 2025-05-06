@@ -110,6 +110,7 @@
 		qna.Answer = await answerEditor!.GetHTML();
         MudDialog!.Close(DialogResult.Ok(qna));
     }
+
     private void Cancel() => MudDialog!.Cancel();
 
 	protected override void OnInitialized()

@@ -13,6 +13,8 @@ namespace WASMFAQv2.Server.Repository
         {
             _context = context;
         }
+
+        // QnASet Methods
         public async Task<List<QnASet>> GetQnASetsAsync()
         {
             return await _context.QnASets.ToListAsync();
@@ -30,7 +32,17 @@ namespace WASMFAQv2.Server.Repository
 
             return retValue;
         }
-
+        public async Task<List<QnA>> GetQuestionsByQnASetIdAsync(int id)
+        {
+            var qnas = _context.QnAs
+                .Where(q => q.QnASetId == id)
+                .ToListAsync();
+            if (qnas == null)
+            {
+                throw new Exception(AppStrings.QnASetNotFound);
+            }
+            return await qnas;
+        }
         public async Task<bool> AddQnASetAsync(QnASet qnaSet)
         {
             _context.QnASets.Add(qnaSet);
@@ -70,18 +82,7 @@ namespace WASMFAQv2.Server.Repository
             return await _context.SaveChangesAsync().ContinueWith(task => task.Result > 0);
         }
 
-        public async Task<List<QnA>> GetQuestionsByQnASetIdAsync(int id)
-        {
-            var qnas = _context.QnAs
-                .Where(q => q.QnASetId == id)
-                .ToListAsync();
-            if (qnas == null)
-            {
-                throw new Exception(AppStrings.QnASetNotFound);
-            }
-            return await qnas;
-        }
-
+        // QnA Methods
         public async Task<bool> DeleteQnAAsync(int id)
         {
             var qna = await _context.QnAs
@@ -123,18 +124,8 @@ namespace WASMFAQv2.Server.Repository
             _context.Entry(existingQnA).CurrentValues.SetValues(qna);
             return await SaveChangesAsync();
         }
-        public async Task<FAQ> GetFAQAsync()
-        {
-            var faq = await _context.FAQs
-                .FirstOrDefaultAsync();
-            if (faq == null)
-            {
-                faq = new FAQ();
-                faq.Title = AppStrings.FAQDefaultTitle;
-                faq.Description = AppStrings.FAQDefaultDescription;
-            }
-            return faq;
-        }
+
+        // Sort Methods
         public async Task<bool> NormalizeQnASetSortOrderAsync()
         {
             var qnaSets = await _context.QnASets
@@ -165,6 +156,20 @@ namespace WASMFAQv2.Server.Repository
 
             await _context.SaveChangesAsync();
             return true;
+        }
+
+        // Base FAQ Methods
+        public async Task<FAQ> GetFAQAsync()
+        {
+            var faq = await _context.FAQs
+                .FirstOrDefaultAsync();
+            if (faq == null)
+            {
+                faq = new FAQ();
+                faq.Title = AppStrings.FAQDefaultTitle;
+                faq.Description = AppStrings.FAQDefaultDescription;
+            }
+            return faq;
         }
         public async Task<bool> UpdateFAQAsync(FAQ faq)
         {

@@ -6,20 +6,20 @@
     </DialogContent>
     <DialogActions>
         <MudButton Color="Color.Default" OnClick="Cancel">@AppStrings.Cancel</MudButton>
-        <MudButton Color="Color.Warning" OnClick="Submit">@AppStrings.Delete</MudButton>
+        <MudButton Color="Color.Warning" OnClick="Delete">@AppStrings.Delete</MudButton>
     </DialogActions>
 </MudDialog>
 
 @code {
 
-
     [CascadingParameter]
     private IMudDialogInstance? MudDialog { get; set; }
 
-    private void Submit()
+    private void Delete()
     {
         MudDialog?.Close(DialogResult.Ok(true));
     }
+
     private void Cancel() => MudDialog?.Cancel();
 
 }

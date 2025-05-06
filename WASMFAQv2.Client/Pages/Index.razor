@@ -4,7 +4,7 @@
 
 @inject IServiceProvider ServiceProvider
 
-<PageTitle>Home</PageTitle>
+<PageTitle>@AppStrings.Home</PageTitle>
 @if (OperatingSystem.IsBrowser() == false)
 {
 	<p>@AppStrings.Loading</p>
@@ -12,11 +12,9 @@
 else if (qnaSets == null)
 {
 	<MudGrid Justify="Justify.Center">
-		<MudItem xs="12" sm="6">
+		<MudItem xs="2">
 			<MudCard>
-				<MudCardHeader>
-					<MudText Typo="Typo.h5"><b>@AppStrings.Loading</b></MudText>
-				</MudCardHeader>
+				<MudImage src="images/loader.gif" alt="@AppStrings.Loading" />
 			</MudCard>
 		</MudItem>
 	</MudGrid>
@@ -116,6 +114,5 @@ else
 			StateHasChanged(); 
 		}
 	}
-
 
 }

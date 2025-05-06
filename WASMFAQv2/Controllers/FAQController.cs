@@ -10,12 +10,12 @@ namespace WASMFAQv2.Server.Controllers
     public class FAQController : ControllerBase
     {
         private readonly IQnASetRepository _qnaSetRepository;
-
         public FAQController(IQnASetRepository qnaSetRepository)
         {
             _qnaSetRepository = qnaSetRepository;
         }
 
+        // QnASets Methods
         [HttpGet("qnasets")]
         public async Task<IActionResult> GetQnASets()
         {
@@ -59,7 +59,6 @@ namespace WASMFAQv2.Server.Controllers
             }
             return NotFound();
         }
-
         [HttpGet("qnasets/{id}/questions")]
         public async Task<IActionResult> GetQuestionsByQnASetId(int id)
         {
@@ -67,6 +66,7 @@ namespace WASMFAQv2.Server.Controllers
             return Ok(questions);
         }
 
+        // QnA Methods
         [HttpPost("qnasets/{id}/questions")]
         public async Task<IActionResult> AddQnA(QnA qna)
         {
@@ -95,12 +95,8 @@ namespace WASMFAQv2.Server.Controllers
             }
             return BadRequest();
         }
-        [HttpGet("faq")]
-        public async Task<IActionResult> GetFAQ()
-        {
-            var faq = await _qnaSetRepository.GetFAQAsync();
-            return Ok(faq);
-        }
+
+        // Sort Methods
         [HttpPost("qnasets/normalize-sort-order")]
         public async Task<IActionResult> NormalizeQnASetSortOrder()
         {
@@ -118,6 +114,14 @@ namespace WASMFAQv2.Server.Controllers
                 return NoContent();
             }
             return BadRequest();
+        }
+
+        // FAQ Methods
+        [HttpGet("faq")]
+        public async Task<IActionResult> GetFAQ()
+        {
+            var faq = await _qnaSetRepository.GetFAQAsync();
+            return Ok(faq);
         }
         [HttpPut("faq")]
         public async Task<IActionResult> UpdateFAQ([FromBody] FAQ faq)

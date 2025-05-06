@@ -4,7 +4,7 @@
 @inject NavigationManager NavigationManager
 @inject IDialogService DialogService
 
-<PageTitle>Edit</PageTitle>
+<PageTitle>@AppStrings.Edit</PageTitle>
 @if (OperatingSystem.IsBrowser() == false)
 {
 	<p>@AppStrings.Loading</p>
@@ -12,11 +12,9 @@
 else if (qnaSets == null)
 {
 	<MudGrid Justify="Justify.Center">
-		<MudItem xs="12" sm="6">
+		<MudItem xs="2">
 			<MudCard>
-				<MudCardHeader>
-					<MudText Typo="Typo.h5"><b>@AppStrings.Loading</b></MudText>
-				</MudCardHeader>
+				<MudImage src="images/loader.gif" alt="@AppStrings.Loading" />
 			</MudCard>
 		</MudItem>
 	</MudGrid>
@@ -28,11 +26,15 @@ else
 	<MudLayout>
 		<MudAppBar Elevation="4" Fixed="true">
 			<MudGrid Justify="Justify.Center">
-				<MudButton Color="Color.Success" Variant="Variant.Filled" @onclick="CreateQnASetAsync">
+				<MudButton Color="Color.Success" 
+				           Variant="Variant.Filled" 
+						   @onclick="CreateQnASetAsync">
 					<MudIcon Icon="@Icons.Material.Filled.Add" />
 					@AppStrings.NewQnASet
 				</MudButton>
-				<MudButton Color="Color.Primary" Variant="Variant.Filled" Href="/">
+				<MudButton Color="Color.Primary" 
+				           Variant="Variant.Filled" 
+						   Href="/">
 					<MudIcon Icon="@Icons.Material.Filled.Home" />
 					@AppStrings.Home
 				</MudButton>
@@ -48,7 +50,9 @@ else
 						<br />
 						<br />
 						<MudGrid Justify="Justify.Center">
-							<MudButton Color="Color.Success" Variant="Variant.Filled" OnClick="@(() => EditFAQAsync(faq))">
+							<MudButton Color="Color.Success" 
+							           Variant="Variant.Filled" 
+									   OnClick="@(() => EditFAQAsync(faq))">
 								<MudIcon Icon="@Icons.Material.Filled.Edit" />
 							</MudButton>
 						</MudGrid>
@@ -68,19 +72,28 @@ else
 					<MudCard>
 						<MudCardHeader Class="pe-0 ps-6">
 							<MudGrid Justify="Justify.FlexStart">
-								<MudButton Color="Color.Tertiary" Variant="Variant.Filled" OnClick="@(() => MoveQnASetUp(qnaSet))">
+								<MudButton 
+									Color="Color.Tertiary" 
+									Variant="Variant.Filled" 
+									OnClick="@(() => MoveQnASetUp(qnaSet))">
 									<MudIcon Icon="@Icons.Material.Filled.ArrowCircleUp" />
 								</MudButton>
-								<MudButton Color="Color.Tertiary" Variant="Variant.Filled" OnClick="@(() => MoveQnASetDown(qnaSet))">
+								<MudButton Color="Color.Tertiary" 
+								           Variant="Variant.Filled" 
+										   OnClick="@(() => MoveQnASetDown(qnaSet))">
 									<MudIcon Icon="@Icons.Material.Filled.ArrowCircleDown" />
 								</MudButton>
 							</MudGrid>
 							<MudGrid Justify="Justify.FlexEnd">
 
-								<MudButton Color="Color.Error" Variant="Variant.Filled" OnClick="@(() => DeleteQnASetAsync(qnaSet.QnASetId))">
+								<MudButton Color="Color.Error" 
+								           Variant="Variant.Filled" 
+										   OnClick="@(() => DeleteQnASetAsync(qnaSet.QnASetId))">
 									<MudIcon Icon="@Icons.Material.Filled.Delete" />
 								</MudButton>
-								<MudButton Color="Color.Success" Variant="Variant.Filled" OnClick="@(() => EditQnaSetAsync(qnaSet))">
+								<MudButton Color="Color.Success" 
+								           Variant="Variant.Filled" 
+										   OnClick="@(() => EditQnaSetAsync(qnaSet))">
 									<MudIcon Icon="@Icons.Material.Filled.Edit" />
 								</MudButton>
 							</MudGrid>
@@ -98,12 +111,16 @@ else
 								<MudCard>
 									<MudGrid Justify="Justify.SpaceBetween" Class="mb-4">
 										<MudItem xs="2" md="1">
-											<MudButton Color="Color.Tertiary" Variant="Variant.Filled" OnClick="@(() => MoveQnAUp(qna, qnaSet))">
+											<MudButton Color="Color.Tertiary" 
+											           Variant="Variant.Filled" 
+													   OnClick="@(() => MoveQnAUp(qna, qnaSet))">
 												<MudIcon Icon="@Icons.Material.Filled.ArrowCircleUp" />
 											</MudButton>
 										</MudItem>
 										<MudItem xs="2" md="1">
-											<MudButton Color="Color.Tertiary" Variant="Variant.Filled" OnClick="@(() => MoveQnADown(qna, qnaSet))">
+											<MudButton Color="Color.Tertiary" 
+											           Variant="Variant.Filled" 
+													   OnClick="@(() => MoveQnADown(qna, qnaSet))">
 												<MudIcon Icon="@Icons.Material.Filled.ArrowCircleDown" />
 											</MudButton>
 										</MudItem>
@@ -114,12 +131,16 @@ else
 											</MudText>
 										</MudItem>
 										<MudItem xs="2" md="1">
-											<MudButton Color="Color.Error" Variant="Variant.Filled" OnClick="@(() => DeleteQnAAsync(qna.QnaId))">
+											<MudButton Color="Color.Error" 
+											           Variant="Variant.Filled" 
+													   OnClick="@(() => DeleteQnAAsync(qna.QnaId))">
 												<MudIcon Icon="@Icons.Material.Filled.Delete" />
 											</MudButton>
 										</MudItem>
 										<MudItem xs="2" md="1">
-											<MudButton Color="Color.Success" Variant="Variant.Filled" OnClick="@(() => EditQnAAsync(qna, qnaSet.QnASetId))">
+											<MudButton Color="Color.Success" 
+											           Variant="Variant.Filled" 
+													   OnClick="@(() => EditQnAAsync(qna, qnaSet.QnASetId))">
 												<MudIcon Icon="@Icons.Material.Filled.Edit" />
 											</MudButton>
 										</MudItem>
@@ -129,7 +150,9 @@ else
 								<br />
 							}
 							<MudGrid Justify="Justify.Center">
-								<MudButton Color="Color.Success" Variant="Variant.Filled" OnClick="@(() => CreateQnAAsync(qnaSet.QnASetId))">
+								<MudButton Color="Color.Success" 
+								           Variant="Variant.Filled" 
+										   OnClick="@(() => CreateQnAAsync(qnaSet.QnASetId))">
 									<MudIcon Icon="@Icons.Material.Filled.Add" />
 								</MudButton>
 							</MudGrid>
@@ -169,20 +192,20 @@ else
 			StateHasChanged();
 		}
 	}
-
-	private async Task DeleteQnAAsync(int qnaId)
+	
+	private async Task InitializeQnASets()
 	{
-		var options = new DialogOptions { BackgroundClass = "bg-blur" };
-		var dialog = await DialogService.ShowAsync<ConfirmDeleteModal>(@AppStrings.ConfirmDelete, options);
-		var result = await dialog.Result;
-
-		if (result is not null && !result.Canceled)
+		qnaSets = await FAQApiService.GetQnASetsAsync();
+		qnaSets = qnaSets.OrderBy(q => q.SortOrder).ToList();
+		foreach (var qnaSet in qnaSets)
 		{
-			await FAQApiService.DeleteQnAAsync(qnaId);
-			await InitializeQnASets();
-			StateHasChanged();
+			qnaSet.QnAs = await FAQApiService.GetQuestionsByQnASetIdAsync(qnaSet.QnASetId);
+			qnaSets = qnaSets.OrderBy(q => q.SortOrder).ToList();
+
 		}
 	}
+
+	// QnASet Methods
 
 	private async Task DeleteQnASetAsync(int qnaSetId)
 	{
@@ -237,6 +260,8 @@ else
 		}
 
 	}
+	
+	// QnA Methods
 
 	private async Task CreateQnAAsync(int QnASetId)
 	{
@@ -258,6 +283,20 @@ else
 			qna.SortOrder = (qnaSets.FirstOrDefault(q => q.QnASetId == QnASetId)?.QnAs?.Count ?? 0) + 1;
 			await FAQApiService.AddQnAAsync(qna);
 			await FAQApiService.NormalizeQnASortOrderAsync();
+			await InitializeQnASets();
+			StateHasChanged();
+		}
+	}
+
+	private async Task DeleteQnAAsync(int qnaId)
+	{
+		var options = new DialogOptions { BackgroundClass = "bg-blur" };
+		var dialog = await DialogService.ShowAsync<ConfirmDeleteModal>(@AppStrings.ConfirmDelete, options);
+		var result = await dialog.Result;
+
+		if (result is not null && !result.Canceled)
+		{
+			await FAQApiService.DeleteQnAAsync(qnaId);
 			await InitializeQnASets();
 			StateHasChanged();
 		}
@@ -287,6 +326,7 @@ else
 		}
 	}
 
+	// FAQ Methods
 	private async Task EditFAQAsync(FAQ faq)
 	{
 		var parameters = new DialogParameters();
@@ -301,6 +341,7 @@ else
 		}
 	}
 
+	// Sort Methods
 	private async Task MoveQnASetUp(QnASet qnaSet)
 	{
 		var ordered = qnaSets.OrderBy(q => q.SortOrder).ToList();
@@ -380,18 +421,7 @@ else
 		StateHasChanged();
 	}
 
-	private async Task InitializeQnASets()
-	{
-		qnaSets = await FAQApiService.GetQnASetsAsync();
-		qnaSets = qnaSets.OrderBy(q => q.SortOrder).ToList();
-		foreach (var qnaSet in qnaSets)
-		{
-			qnaSet.QnAs = await FAQApiService.GetQuestionsByQnASetIdAsync(qnaSet.QnASetId);
-			qnaSets = qnaSets.OrderBy(q => q.SortOrder).ToList();
-
-		}
-	}
-
+	// Models
 	private class QnASetModel
 	{
 		public string? Name { get; set; }
