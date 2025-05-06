@@ -10,6 +10,7 @@ namespace WASMFAQv2.Shared.Models
         public string? Name { get; set; }
         public string? Description { get; set; }
         public List<QnA>? QnAs { get; set; }
+        public int SortOrder { get; set; } = 0;
     }
 
 

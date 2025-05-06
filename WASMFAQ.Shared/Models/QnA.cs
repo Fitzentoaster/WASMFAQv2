@@ -9,6 +9,7 @@ namespace WASMFAQv2.Shared.Models
         public int? QnASetId { get; set; }
         public string? Question { get; set; } = "Question";
         public string? Answer { get; set; } = "Answer";
+        public int SortOrder { get; set; } = 0;
 
     }
 }

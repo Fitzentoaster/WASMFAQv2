@@ -46,6 +46,7 @@ namespace WASMFAQv2.Server.Repository
             }
             if (qnaSet.Name != null) existingQnASet.Name = qnaSet.Name;
             if (qnaSet.Description != null) existingQnASet.Description = qnaSet.Description;
+            if (qnaSet.SortOrder != 0) existingQnASet.SortOrder = qnaSet.SortOrder;
 
             return await SaveChangesAsync();
         }
