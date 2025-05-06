@@ -40,7 +40,7 @@ else
 		</MudGrid>
 	}
 
-	@foreach (var qnaSet in qnaSets)
+	@foreach (var qnaSet in qnaSets.OrderBy(q => q.SortOrder))
 	{
 		<MudGrid Justify="Justify.Center">
 			<MudItem xs="12" sm="6">
@@ -53,7 +53,7 @@ else
 							<MudText Typo="Typo.body1">@qnaSet.Description</MudText>
 
 							<MudExpansionPanels MultiExpansion="true">
-								@foreach (var qna in qnaSet.QnAs ?? Enumerable.Empty<QnA>())
+								@foreach (var qna in (qnaSet.QnAs ?? Enumerable.Empty<QnA>()).OrderBy(q => q.SortOrder))
 								{
 									<MudExpansionPanel>
 										<TitleContent>
@@ -80,7 +80,7 @@ else
 
 	<MudGrid Justify="Justify.Center">
 		<MudButton Color="Color.Primary" Variant="Variant.Filled" Href="edit">
-			Edit
+			@AppStrings.Edit
 		</MudButton>
 	</MudGrid>
 }

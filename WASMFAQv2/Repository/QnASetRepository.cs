@@ -142,7 +142,7 @@ namespace WASMFAQv2.Server.Repository
                 .ToListAsync();
             for (int i = 0; i < qnaSets.Count; i++)
             {
-                qnaSets[i].SortOrder = i + 1;
+                qnaSets[i].SortOrder = i;
             }
             _context.QnASets.UpdateRange(qnaSets);
             return await SaveChangesAsync();
@@ -160,6 +160,7 @@ namespace WASMFAQv2.Server.Repository
                 {
                     qnas[i].SortOrder = i;
                 }
+                _context.QnAs.UpdateRange(qnas);
             }
 
             await _context.SaveChangesAsync();

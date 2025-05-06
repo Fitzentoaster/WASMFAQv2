@@ -115,11 +115,29 @@ namespace WASMFAQv2.Client.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Edit.
+        /// </summary>
+        internal static string Edit {
+            get {
+                return ResourceManager.GetString("Edit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Edit FAQ Name and Description.
         /// </summary>
         internal static string EditModalTitle {
             get {
                 return ResourceManager.GetString("EditModalTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Editor failed to load content..
+        /// </summary>
+        internal static string EditorFailed {
+            get {
+                return ResourceManager.GetString("EditorFailed", resourceCulture);
             }
         }
         

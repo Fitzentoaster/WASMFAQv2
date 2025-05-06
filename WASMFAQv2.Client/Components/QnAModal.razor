@@ -98,7 +98,7 @@
                 }
                 catch (JSException ex)
                 {
-                    Console.WriteLine($"Editor failed to load content: {ex.Message}");
+                    Console.WriteLine(AppStrings.EditorFailed + ex.Message);
                 }
             }
         }

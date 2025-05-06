@@ -135,8 +135,14 @@
   <data name="Description" xml:space="preserve">
     <value>Description</value>
   </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Edit</value>
+  </data>
   <data name="EditModalTitle" xml:space="preserve">
     <value>Edit FAQ Name and Description</value>
+  </data>
+  <data name="EditorFailed" xml:space="preserve">
+    <value>Editor failed to load content.</value>
   </data>
   <data name="EditQnA" xml:space="preserve">
     <value>Edit Q&amp;A</value>

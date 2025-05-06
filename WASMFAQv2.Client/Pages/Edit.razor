@@ -62,7 +62,7 @@ else
 		<br />
 		<br />
 		<MudGrid Justify="Justify.Center">
-			@foreach (var qnaSet in qnaSets)
+			@foreach (var qnaSet in qnaSets.OrderBy(q => q.SortOrder))
 			{
 				<MudItem xs="12" sm="8">
 					<MudCard>
@@ -93,7 +93,7 @@ else
 					<MudCard>
 
 						<MudCardContent>
-							@foreach (var qna in qnaSet.QnAs ?? Enumerable.Empty<QnA>())
+							@foreach (var qna in (qnaSet.QnAs ?? Enumerable.Empty<QnA>()).OrderBy(q => q.SortOrder))
 							{
 								<MudCard>
 									<MudGrid Justify="Justify.SpaceBetween" Class="mb-4">
@@ -315,7 +315,7 @@ else
 
 		await FAQApiService.UpdateQnASetAsync(qnaSet);
 		await FAQApiService.UpdateQnASetAsync(above);
-		qnaSets = qnaSets.OrderBy(q => q.SortOrder).ToList();
+		await InitializeQnASets(); 
 		StateHasChanged();
 	}
 
@@ -333,7 +333,7 @@ else
 
 		await FAQApiService.UpdateQnASetAsync(qnaSet);
 		await FAQApiService.UpdateQnASetAsync(below);
-		qnaSets = qnaSets.OrderBy(q => q.SortOrder).ToList();
+		await InitializeQnASets(); 
 		StateHasChanged();
 	}
 
@@ -353,7 +353,7 @@ else
 		await FAQApiService.UpdateQnAAsync(qna);
 		await FAQApiService.UpdateQnAAsync(above);
 		await FAQApiService.NormalizeQnASortOrderAsync();
-		qnaSet.QnAs = qnaSet.QnAs.OrderBy(q => q.SortOrder).ToList();
+		await InitializeQnASets();
 		StateHasChanged();
 	}
 
@@ -374,7 +374,7 @@ else
 		await FAQApiService.UpdateQnAAsync(qna);
 		await FAQApiService.UpdateQnAAsync(below);
 		await FAQApiService.NormalizeQnASortOrderAsync();
-		qnaSet.QnAs = qnaSet.QnAs.OrderBy(q => q.SortOrder).ToList();
+		await InitializeQnASets(); 
 		StateHasChanged();
 	}
 
