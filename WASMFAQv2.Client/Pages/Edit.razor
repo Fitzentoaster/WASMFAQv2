@@ -2,6 +2,7 @@
 
 @inject IServiceProvider ServiceProvider
 @inject NavigationManager NavigationManager
+@inject IDialogService DialogService
 
 <PageTitle>Edit</PageTitle>
 @if (OperatingSystem.IsBrowser() == false)
@@ -48,9 +49,6 @@ else
 						<MudButton Color="Color.Error" Variant="Variant.Filled" OnClick="@(() => DeleteQnASetAsync(qnaset.QnASetId))">
 							<MudIcon Icon="@Icons.Material.Filled.Delete" />Delete Set
 						</MudButton>
-						<MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="@(() => SaveQnASetAsync(qnaset))">
-							<MudIcon Icon="@Icons.Material.Filled.Save" /> Save Set
-						</MudButton>
 					</MudCardHeader>
 					<MudCardContent>
 						<MudTextField Label="Set Name" @bind-Value="qnaset.Name" Variant="Variant.Outlined" />
@@ -59,31 +57,28 @@ else
 				</MudCard>
 				<MudCard>
 					<MudCardHeader>
-						<MudText Typo="Typo.h6">Questions</MudText>	
+						<MudText Typo="Typo.h3"><u>Questions:</u></MudText>	
 					</MudCardHeader>
 					<MudCardContent>
 						@foreach (var qna in qnaset.QnAs)
 						{
 							<br />
-							<MudTextField Label="Question" @bind-Value="qna.Question" Variant="Variant.Outlined" />
-							<MudTextField Label="Answer" @bind-Value="qna.Answer" />
-							<br />
+							<MudText Typo="Typo.h5">@qna.Question</MudText>
+							<MudText>@qna.Answer</MudText>
 							<MudButton Color="Color.Error" Variant="Variant.Filled" OnClick="@(() => DeleteQnAAsync(qna.QnaId))">
 								<MudIcon Icon="@Icons.Material.Filled.Delete" /> Delete Q&A
 							</MudButton>
-							<MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="@(() => SaveQnAAsync(qna))">
-								<MudIcon Icon="@Icons.Material.Filled.Save" /> Save Q&A
-							</MudButton>
-							<MudButton Color="Color.Success" Variant="Variant.Filled" OnClick="@(() => CreateQnAAsync(qnaset.QnASetId))">
-								<MudIcon Icon="@Icons.Material.Filled.Add" /> Add Q&A
-							</MudButton>
+							<br />
 						}
+						<MudButton Color="Color.Success" Variant="Variant.Filled" OnClick="@(() => CreateQnAAsync(qnaset.QnASetId))">
+							<MudIcon Icon="@Icons.Material.Filled.Add" /> Add Q&A
+						</MudButton>
 					</MudCardContent>
 				</MudCard>
 			</MudItem>
 		}
 	</MudGrid>
-			
+
 	<br />
 	<br />
 	<br />
@@ -92,6 +87,11 @@ else
 			Create New Set
 		</MudButton>
 	</MudGrid>
+	<style>
+		.bg-blur {
+		backdrop-filter: blur(10px);
+		}
+	</style>
 
 }
 @code {
@@ -133,34 +133,42 @@ else
 
 	private async Task CreateQnASetAsync()
 	{
-		await FAQApiService.AddQnASetAsync(new QnASet());
+		var qnaSet = new QnASet();
+		qnaSet.Name = "Name";
+		qnaSet.Description = "Description";
+		await FAQApiService.AddQnASetAsync(qnaSet);
 		await InitializeQnASets(); 
 		StateHasChanged(); 
 	}
 
 	private async Task CreateQnAAsync(int QnASetId)
 	{
-		QnA qna = new QnA();
-		qna.QnASetId = QnASetId;
-		qna.Question = "Question?";
-		qna.Answer = "Answer";
-		await FAQApiService.AddQnAAsync(qna);
-		await InitializeQnASets();
-		StateHasChanged(); 
+		await OpenQuestionEditDialogAsync(QnASetId);
 	}
 
-	private async Task SaveQnAAsync(QnA qna)
+	private async Task OpenQuestionEditDialogAsync(int QnASetId)
 	{
-		await FAQApiService.UpdateQnAAsync(qna);
-		await InitializeQnASets();
-		StateHasChanged();
-	}
+		var parameters = new DialogParameters();
+		parameters.Add("QnASetId", QnASetId);
+		parameters.Add("QnA", new QnA());
+		parameters.Add("FaqApiService", FAQApiService);
+		var options = new DialogOptions { BackgroundClass = "bg-blur" };
 
-	private async Task SaveQnASetAsync(QnASet qnaSet)
-	{
-		await FAQApiService.UpdateQnASetAsync(qnaSet);
-		await InitializeQnASets();
-		StateHasChanged();
+		var dialog = await DialogService.ShowAsync<QuestionModal>("New Q&A", options);
+		var result = await dialog.Result;
+
+		if (!result.Canceled)
+		{
+			var qna = (QnA)result.Data;
+			qna.QnASetId = QnASetId;
+			await FAQApiService.AddQnAAsync(qna);
+			await InitializeQnASets();
+			StateHasChanged();
+		}
+		else
+		{
+			Console.WriteLine("Dialog was cancelled");
+		}
 	}
 
 	private async Task InitializeQnASets()
