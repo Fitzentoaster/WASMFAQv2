@@ -172,16 +172,39 @@ else
 
 	private async Task DeleteQnAAsync(int qnaId)
 	{
-		await FAQApiService.DeleteQnAAsync(qnaId);
-		await InitializeQnASets(); 
-		StateHasChanged(); 
+		var options = new DialogOptions { BackgroundClass = "bg-blur" };
+		var dialog = DialogService.Show<ConfirmDeleteModal>("Confirm Delete", options);
+		var result = await dialog.Result;
+
+		if (!result.Canceled)
+		{
+			await FAQApiService.DeleteQnAAsync(qnaId);
+			await InitializeQnASets();
+			StateHasChanged();
+		}
+		else
+		{
+			Console.WriteLine("Dialog was cancelled.");
+		}
 	}
 
 	private async Task DeleteQnASetAsync(int qnaSetId)
 	{
-		await FAQApiService.DeleteQnASetAsync(qnaSetId);
-		await InitializeQnASets(); 
-		StateHasChanged(); 
+		var options = new DialogOptions { BackgroundClass = "bg-blur" };
+		var dialog = DialogService.Show<ConfirmDeleteModal>("Confirm Delete", options);
+		var result = await dialog.Result;
+
+		if (!result.Canceled)
+		{
+			await FAQApiService.DeleteQnASetAsync(qnaSetId);
+			await InitializeQnASets();
+			StateHasChanged();
+		}
+		else
+		{
+			Console.WriteLine("Dialog was cancelled.");
+		}
+
 	}
 
 
