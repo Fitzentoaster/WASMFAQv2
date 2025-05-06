@@ -17,6 +17,15 @@ namespace WASMFAQv2.Server.Contexts
                 .HasMany(q => q.QnAs)
                 .WithOne()
                 .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<FAQ>().HasData(
+                new FAQ
+                {
+                    FAQId = 1,
+                    Title = "FAQ",
+                    Description = "Description"
+                }
+            );
         }
     }
 }
