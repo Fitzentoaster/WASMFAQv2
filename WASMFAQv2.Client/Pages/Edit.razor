@@ -315,6 +315,7 @@ else
 
 		await FAQApiService.UpdateQnASetAsync(qnaSet);
 		await FAQApiService.UpdateQnASetAsync(above);
+		await FAQApiService.NormalizeQnASetSortOrderAsync();
 		await InitializeQnASets(); 
 		StateHasChanged();
 	}
@@ -333,6 +334,7 @@ else
 
 		await FAQApiService.UpdateQnASetAsync(qnaSet);
 		await FAQApiService.UpdateQnASetAsync(below);
+		await FAQApiService.NormalizeQnASetSortOrderAsync();
 		await InitializeQnASets(); 
 		StateHasChanged();
 	}
