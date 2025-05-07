@@ -21,10 +21,20 @@ else if (qnaSets == null)
 }
 else
 {
-	<MudThemeProvider IsDarkMode="true" />
+	<MudAppBar Elevation="4" Fixed="true">
+		<MudGrid Justify="Justify.Center">
+			<MudButton Color="Color.Primary" Variant="Variant.Filled" Href="edit">
+				@AppStrings.Edit
+			</MudButton>
+			<MudButton Color="Color.Transparent" Variant="Variant.Filled" OnClick="ToggleTheme">
+				<MudIcon Icon="@Icons.Material.Filled.Brightness4" />
+			</MudButton>
+		</MudGrid>
+	</MudAppBar>
+	<MudThemeProvider IsDarkMode="@isDarkMode" />
 	@if (faq is not null)
 	{
-		<MudGrid Justify="Justify.Center">
+		<MudGrid Justify="Justify.Center" Class="mt-16">
 			<MudItem xs="12" sm="6">
 				<MudCard>
 					<MudCardHeader>
@@ -75,16 +85,12 @@ else
 	<br />
 	<br />
 	<br />
-
-	<MudGrid Justify="Justify.Center">
-		<MudButton Color="Color.Primary" Variant="Variant.Filled" Href="edit">
-			@AppStrings.Edit
-		</MudButton>
-	</MudGrid>
 }
 @code {
-	private IFAQApiService? FAQApiService;
+	private IFAQApiService FAQApiService = null!;
+	private ILocalStorageService? LocalStorageService = null!;
 	private List<QnASet>? qnaSets;
+	private bool isDarkMode = true;
 	private FAQ? faq;
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -92,6 +98,8 @@ else
 		if (firstRender && OperatingSystem.IsBrowser())
 		{
 			FAQApiService = ServiceProvider.GetRequiredService<IFAQApiService>();
+			LocalStorageService = ServiceProvider.GetRequiredService<ILocalStorageService>();
+			isDarkMode = await LocalStorageService.GetItemAsync<bool>("isDarkMode");
 			faq = await FAQApiService.GetFAQAsync();
 			if (faq == null)
 			{
@@ -113,6 +121,13 @@ else
 
 			StateHasChanged(); 
 		}
+	}
+	// Theme Methods
+	private async Task ToggleTheme()
+	{
+		isDarkMode = !isDarkMode;
+		await LocalStorageService!.SetItemAsync("isDarkMode", isDarkMode);
+		StateHasChanged();
 	}
 
 }

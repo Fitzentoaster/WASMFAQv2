@@ -22,22 +22,25 @@ else if (qnaSets == null)
 }
 else
 {
-	<MudThemeProvider IsDarkMode="true" />
+	<MudThemeProvider IsDarkMode="@isDarkMode" />
 
 	<MudLayout>
 		<MudAppBar Elevation="4" Fixed="true">
 			<MudGrid Justify="Justify.Center">
 				<MudButton Color="Color.Success" 
-				           Variant="Variant.Filled" 
-						   @onclick="CreateQnASetAsync">
+				Variant="Variant.Filled" 
+				@onclick="CreateQnASetAsync">
 					<MudIcon Icon="@Icons.Material.Filled.Add" />
 					@AppStrings.NewQnASet
 				</MudButton>
 				<MudButton Color="Color.Primary" 
-				           Variant="Variant.Filled" 
-						   Href="/">
+				Variant="Variant.Filled" 
+				Href="/">
 					<MudIcon Icon="@Icons.Material.Filled.Home" />
 					@AppStrings.Home
+				</MudButton>
+				<MudButton Color="Color.Transparent" Variant="Variant.Filled" OnClick="ToggleTheme">
+					<MudIcon Icon="@Icons.Material.Filled.Brightness4" />
 				</MudButton>
 			</MudGrid>
 		</MudAppBar>
@@ -52,8 +55,8 @@ else
 						<br />
 						<MudGrid Justify="Justify.Center">
 							<MudButton Color="Color.Success" 
-							           Variant="Variant.Filled" 
-									   OnClick="@(() => EditFAQAsync(faq))">
+							Variant="Variant.Filled" 
+							OnClick="@(() => EditFAQAsync(faq))">
 								<MudIcon Icon="@Icons.Material.Filled.Edit" />
 							</MudButton>
 						</MudGrid>
@@ -70,33 +73,33 @@ else
 			@foreach (var qnaSet in qnaSets.OrderBy(q => q.SortOrder))
 			{
 				<span id="@($"qnaSet-{qnaSet.SortOrder}")">
-			    </span>
+				</span>
 				<MudItem xs="12" sm="8">
 					<MudCard>
 						<MudCardHeader Class="pe-0 ps-6">
 							<MudGrid Justify="Justify.FlexStart">
 								<MudButton 
-									Color="Color.Tertiary" 
-									Variant="Variant.Filled" 
-									OnClick="@(() => MoveQnASetUp(qnaSet))">
+								Color="Color.Tertiary" 
+								Variant="Variant.Filled" 
+								OnClick="@(() => MoveQnASetUp(qnaSet))">
 									<MudIcon Icon="@Icons.Material.Filled.ArrowCircleUp" />
 								</MudButton>
 								<MudButton Color="Color.Tertiary" 
-								           Variant="Variant.Filled" 
-										   OnClick="@(() => MoveQnASetDown(qnaSet))">
+								Variant="Variant.Filled" 
+								OnClick="@(() => MoveQnASetDown(qnaSet))">
 									<MudIcon Icon="@Icons.Material.Filled.ArrowCircleDown" />
 								</MudButton>
 							</MudGrid>
 							<MudGrid Justify="Justify.FlexEnd">
 
 								<MudButton Color="Color.Error" 
-								           Variant="Variant.Filled" 
-										   OnClick="@(() => DeleteQnASetAsync(qnaSet.QnASetId))">
+								Variant="Variant.Filled" 
+								OnClick="@(() => DeleteQnASetAsync(qnaSet.QnASetId))">
 									<MudIcon Icon="@Icons.Material.Filled.Delete" />
 								</MudButton>
 								<MudButton Color="Color.Success" 
-								           Variant="Variant.Filled" 
-										   OnClick="@(() => EditQnaSetAsync(qnaSet))">
+								Variant="Variant.Filled" 
+								OnClick="@(() => EditQnaSetAsync(qnaSet))">
 									<MudIcon Icon="@Icons.Material.Filled.Edit" />
 								</MudButton>
 							</MudGrid>
@@ -115,15 +118,15 @@ else
 									<MudGrid Justify="Justify.SpaceBetween" Class="mb-4">
 										<MudItem xs="2" md="1">
 											<MudButton Color="Color.Tertiary" 
-											           Variant="Variant.Filled" 
-													   OnClick="@(() => MoveQnAUp(qna, qnaSet))">
+											Variant="Variant.Filled" 
+											OnClick="@(() => MoveQnAUp(qna, qnaSet))">
 												<MudIcon Icon="@Icons.Material.Filled.ArrowCircleUp" />
 											</MudButton>
 										</MudItem>
 										<MudItem xs="2" md="1">
 											<MudButton Color="Color.Tertiary" 
-											           Variant="Variant.Filled" 
-													   OnClick="@(() => MoveQnADown(qna, qnaSet))">
+											Variant="Variant.Filled" 
+											OnClick="@(() => MoveQnADown(qna, qnaSet))">
 												<MudIcon Icon="@Icons.Material.Filled.ArrowCircleDown" />
 											</MudButton>
 										</MudItem>
@@ -135,15 +138,15 @@ else
 										</MudItem>
 										<MudItem xs="2" md="1">
 											<MudButton Color="Color.Error" 
-											           Variant="Variant.Filled" 
-													   OnClick="@(() => DeleteQnAAsync(qna.QnaId))">
+											Variant="Variant.Filled" 
+											OnClick="@(() => DeleteQnAAsync(qna.QnaId))">
 												<MudIcon Icon="@Icons.Material.Filled.Delete" />
 											</MudButton>
 										</MudItem>
 										<MudItem xs="2" md="1">
 											<MudButton Color="Color.Success" 
-											           Variant="Variant.Filled" 
-													   OnClick="@(() => EditQnAAsync(qna, qnaSet.QnASetId))">
+											Variant="Variant.Filled" 
+											OnClick="@(() => EditQnAAsync(qna, qnaSet.QnASetId))">
 												<MudIcon Icon="@Icons.Material.Filled.Edit" />
 											</MudButton>
 										</MudItem>
@@ -154,8 +157,8 @@ else
 							}
 							<MudGrid Justify="Justify.Center">
 								<MudButton Color="Color.Success" 
-								           Variant="Variant.Filled" 
-										   OnClick="@(() => CreateQnAAsync(qnaSet.QnASetId))">
+								Variant="Variant.Filled" 
+								OnClick="@(() => CreateQnAAsync(qnaSet.QnASetId))">
 									<MudIcon Icon="@Icons.Material.Filled.Add" />
 								</MudButton>
 							</MudGrid>
@@ -178,12 +181,18 @@ else
 	private QnASetModel qnaSetModel = new();
 	private FAQ faq = new();
 	private IFAQApiService FAQApiService = null!;
+	private ILocalStorageService LocalStorageService = null!; 
+	private bool isDarkMode = true;
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
 		if (firstRender && OperatingSystem.IsBrowser())
 		{
 			FAQApiService = ServiceProvider.GetRequiredService<IFAQApiService>();
+			LocalStorageService = ServiceProvider.GetRequiredService<ILocalStorageService>();
+
+			isDarkMode = await LocalStorageService.GetItemAsync<bool>("isDarkMode");
+			
 			await FAQApiService.NormalizeQnASetSortOrderAsync();
 			await FAQApiService.NormalizeQnASortOrderAsync();
 			qnaSets = await FAQApiService.GetQnASetsAsync();
@@ -440,6 +449,14 @@ else
 	{
 		var elementId = $"qnaSet-{qnaSetSortOrder}";
 		await JS.InvokeVoidAsync("scrollToElement", elementId);
+	}
+
+	// Theme Methods
+	private async Task ToggleTheme()
+	{
+		isDarkMode = !isDarkMode;
+		await LocalStorageService.SetItemAsync("isDarkMode", isDarkMode);
+		StateHasChanged();
 	}
 
 	// Models
