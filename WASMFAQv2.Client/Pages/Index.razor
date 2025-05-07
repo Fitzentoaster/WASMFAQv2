@@ -33,7 +33,7 @@ else
 	@if (faq is not null)
 	{
 		<MudGrid Justify="Justify.Center" Class="mt-16">
-			<MudItem xs="12" sm="6">
+			<MudItem xs="12" sm="10" md="8" lg="6">
 				<MudCard>
 					<MudCardHeader>
 						<MudText Typo="Typo.h4"><b>@faq.Title</b></MudText>
@@ -49,7 +49,7 @@ else
 	@foreach (var qnaSet in qnaSets.OrderBy(q => q.SortOrder))
 	{
 		<MudGrid Justify="Justify.Center">
-			<MudItem xs="12" sm="6">
+			<MudItem xs="12" sm="10" md="8" lg="6">
 				<MudExpansionPanels MultiExpansion="true" Elevation="3">
 					<MudExpansionPanel>
 						<TitleContent>

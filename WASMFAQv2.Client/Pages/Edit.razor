@@ -53,7 +53,6 @@ else
 }
 @code {
 	private List<QnASet> qnaSets = new();
-	private QnASetModel qnaSetModel = new();
 	private FAQ faq = new();
 	private IFAQApiService FAQApiService = null!;
 	private ILocalStorageService LocalStorageService = null!; 
@@ -194,11 +193,4 @@ else
 		StateHasChanged();
 	}
 
-	// Models
-	private class QnASetModel
-	{
-		public string? Name { get; set; }
-		public string? Description { get; set; }
-		public int QnASetId { get; set; }
-	}
 }
