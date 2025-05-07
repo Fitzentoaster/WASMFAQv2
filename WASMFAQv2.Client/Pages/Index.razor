@@ -11,13 +11,9 @@
 }
 else if (qnaSets == null)
 {
-	<MudGrid Justify="Justify.Center">
-		<MudItem xs="2">
-			<MudCard>
-				<MudImage src="images/loader.gif" alt="@AppStrings.Loading" />
-			</MudCard>
-		</MudItem>
-	</MudGrid>
+	<MudOverlay Visible="true" Color="Color.Transparent" Class="d-flex justify-center align-center">
+		<MudProgressCircular Indeterminate="true" />
+	</MudOverlay>
 }
 else
 {
@@ -90,7 +86,7 @@ else
 	private IFAQApiService FAQApiService = null!;
 	private ILocalStorageService? LocalStorageService = null!;
 	private List<QnASet>? qnaSets;
-	private bool isDarkMode = true;
+	private bool isDarkMode;
 	private FAQ? faq;
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
