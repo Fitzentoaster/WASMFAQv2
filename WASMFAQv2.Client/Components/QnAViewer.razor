@@ -1,0 +1,17 @@
+﻿@if(qna is not null)
+{
+    <MudExpansionPanel>
+        <TitleContent>
+            <MudText Typo="Typo.h6">@qna.Question</MudText>
+        </TitleContent>
+        <ChildContent>
+            <MudText Typo="Typo.body1" Markup="true">
+                @((MarkupString)(qna.Answer ?? string.Empty))
+            </MudText>
+        </ChildContent>
+    </MudExpansionPanel>
+}
+
+@code {
+    [Parameter] public QnA? qna { get; set; } = default!;
+}

@@ -2,23 +2,26 @@
     <MudItem xs="12" sm="6">
         <MudCard GutterBottom="true">
             <MudCardContent>
-                <MudText Typo="Typo.h4">@faq.Title</MudText>
-                <MudText Typo="Typo.h6">@faq.Description</MudText>
-                <br />
-                <br />
-                <MudGrid Justify="Justify.Center">
-                    <MudButton Color="Color.Success"
-                               Variant="Variant.Filled"
-                               OnClick="@(() => OnEdit.InvokeAsync(faq))">
-                        <MudIcon Icon="@Icons.Material.Filled.Edit" />
-                    </MudButton>
-                </MudGrid>
+				@if (faq is not null)
+				{
+                    <MudText Typo="Typo.h4">@faq.Title</MudText>
+                    <MudText Typo="Typo.h6">@faq.Description</MudText>
+                    <br />
+                    <br />
+                    <MudGrid Justify="Justify.Center">
+                        <MudButton Color="Color.Success"
+                        Variant="Variant.Filled"
+                        OnClick="@(() => OnEdit.InvokeAsync(faq))">
+                            <MudIcon Icon="@Icons.Material.Filled.Edit" />
+                        </MudButton>
+                    </MudGrid>
+                }
             </MudCardContent>
         </MudCard>
     </MudItem>
 </MudGrid>
 
 @code {
-    [Parameter] public FAQ faq { get; set; }
+    [Parameter] public FAQ? faq { get; set; }
     [Parameter] public EventCallback<FAQ> OnEdit { get; set; }
 }

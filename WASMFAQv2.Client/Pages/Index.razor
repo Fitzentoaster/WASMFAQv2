@@ -27,7 +27,9 @@ else
 			</MudButton>
 		</MudGrid>
 	</MudAppBar>
+
 	<MudThemeProvider IsDarkMode="@isDarkMode" />
+
 	@if (faq is not null)
 	{
 		<MudGrid Justify="Justify.Center" Class="mt-16">
@@ -59,17 +61,7 @@ else
 							<MudExpansionPanels MultiExpansion="true">
 								@foreach (var qna in (qnaSet.QnAs ?? Enumerable.Empty<QnA>()).OrderBy(q => q.SortOrder))
 								{
-									<MudExpansionPanel>
-										<TitleContent>
-											<MudText Typo="Typo.h6">@qna.Question</MudText>
-										</TitleContent>
-										<ChildContent>
-											<MudText Typo="Typo.body1" Markup="true">
-													@((MarkupString)(qna.Answer ?? string.Empty))
-											</MudText>
-
-										</ChildContent>
-									</MudExpansionPanel>
+									<QnAViewer QnA="qna" />
 								}
 							</MudExpansionPanels>
 						</ChildContent>
@@ -78,9 +70,6 @@ else
 			</MudItem>
 		</MudGrid>
 	}
-	<br />
-	<br />
-	<br />
 }
 @code {
 	private IFAQApiService FAQApiService = null!;
