@@ -184,6 +184,6 @@
     <value>An unhandled error has occured.</value>
   </data>
   <data name="UseTheEditor" xml:space="preserve">
-    <value>Use the editor below to format your answer</value>
+    <value>Answer: Use the editor below to format your answer</value>
   </data>
 </root>

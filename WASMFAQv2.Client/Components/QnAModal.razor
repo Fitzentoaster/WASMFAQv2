@@ -10,21 +10,18 @@
             <ValidationSummary />
             <MudGrid>
                 <MudItem xs="12">
-                    <MudTextField Label="@AppStrings.Question" @bind-Value="qna.Question" Required="true" />
+                    <MudTextField Label="@AppStrings.Question" @bind-Value="qna.Question" Required="true" Variant="Variant.Outlined" />
                 </MudItem>
             </MudGrid>
         </EditForm>
         <hr />
         <MudGrid>
             <MudItem xs="12">
-                <MudText Typo="Typo.h6">@AppStrings.Answer</MudText>
-            </MudItem>
-            <MudItem xs="12">
-                <MudText Typo="Typo.body2">@AppStrings.UseTheEditor</MudText>
+                <MudText Typo="Typo.body1">@AppStrings.UseTheEditor</MudText>
             </MudItem>
         </MudGrid>
         <MudItem xs="12">
-            <div style="color: white">
+            <div style="color: white; height:250px">
                 <BlazoredTextEditor @ref="@answerEditor">
                     <ToolbarContent>
                         <span class="ql-formats">
@@ -43,14 +40,6 @@
                         <span class="ql-formats">
                             <button class="ql-list" value="ordered"></button>
                             <button class="ql-list" value="bullet"></button>
-                            <button class="ql-indent" value="-1"></button>
-                            <button class="ql-indent" value="+1"></button>
-                            <select class="ql-align">
-                                <option selected=""></option>
-                                <option value="center"></option>
-                                <option value="right"></option>
-                                <option value="justify"></option>
-                            </select>
                         </span>
                         <span class="ql-formats">
                             <button class="ql-link"></button>

@@ -259,7 +259,7 @@ namespace WASMFAQv2.Client.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Use the editor below to format your answer.
+        ///   Looks up a localized string similar to Answer: Use the editor below to format your answer.
         /// </summary>
         internal static string UseTheEditor {
             get {
