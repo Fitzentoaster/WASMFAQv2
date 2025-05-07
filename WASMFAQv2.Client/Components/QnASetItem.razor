@@ -1,0 +1,77 @@
+﻿@using WASMFAQv2.Shared.Models
+
+<span id="@($"qnaSet-{QnASet.SortOrder}")"></span>
+<MudItem xs="12" sm="8">
+    <MudCard>
+        <MudCardHeader Class="pe-0 ps-6">
+            <MudGrid Justify="Justify.FlexStart">
+                <MudButton Color="Color.Tertiary"
+                           Variant="Variant.Filled"
+                           OnClick="@(() => OnMoveUp.InvokeAsync(QnASet))">
+                    <MudIcon Icon="@Icons.Material.Filled.ArrowCircleUp" />
+                </MudButton>
+                <MudButton Color="Color.Tertiary"
+                           Variant="Variant.Filled"
+                           OnClick="@(() => OnMoveDown.InvokeAsync(QnASet))">
+                    <MudIcon Icon="@Icons.Material.Filled.ArrowCircleDown" />
+                </MudButton>
+            </MudGrid>
+            <MudGrid Justify="Justify.FlexEnd">
+                <MudButton Color="Color.Error"
+                           Variant="Variant.Filled"
+                           OnClick="@(() => OnDelete.InvokeAsync(QnASet))">
+                    <MudIcon Icon="@Icons.Material.Filled.Delete" />
+                </MudButton>
+                <MudButton Color="Color.Success"
+                           Variant="Variant.Filled"
+                           OnClick="@(() => OnEdit.InvokeAsync(QnASet))">
+                    <MudIcon Icon="@Icons.Material.Filled.Edit" />
+                </MudButton>
+            </MudGrid>
+        </MudCardHeader>
+
+        <MudCardContent>
+            <MudText Label="@AppStrings.Name" Typo="Typo.h4"><u>@QnASet.Name</u></MudText>
+            <MudText Label="@AppStrings.Description" Typo="Typo.h6">@QnASet.Description</MudText>
+        </MudCardContent>
+    </MudCard>
+
+    <MudCard>
+        <MudCardContent>
+            @foreach (var qna in (QnASet.QnAs ?? Enumerable.Empty<QnA>()).OrderBy(q => q.SortOrder))
+            {
+                <QnAItem QnA="qna"
+                         OnMoveUp="@(q => OnMoveQnAUp.InvokeAsync((q, QnASet)))"
+                         OnMoveDown="@(q => OnMoveQnADown.InvokeAsync((q, QnASet)))"
+                         OnDelete="@(q => OnDeleteQnA.InvokeAsync(q))"
+                         OnEdit="@(q => OnEditQnA.InvokeAsync((q, QnASet.QnASetId)))" />
+                <br />
+            }
+
+            <MudGrid Justify="Justify.Center">
+                <MudButton Color="Color.Success"
+                           Variant="Variant.Filled"
+                           OnClick="@(() => OnCreateQnA.InvokeAsync(QnASet.QnASetId))">
+                    <MudIcon Icon="@Icons.Material.Filled.Add" />
+                </MudButton>
+            </MudGrid>
+        </MudCardContent>
+    </MudCard>
+</MudItem>
+
+@code {
+    [Parameter] public QnASet? QnASet { get; set; }
+
+    // Set-level actions
+    [Parameter] public EventCallback<QnASet> OnMoveUp { get; set; }
+    [Parameter] public EventCallback<QnASet> OnMoveDown { get; set; }
+    [Parameter] public EventCallback<QnASet> OnDelete { get; set; }
+    [Parameter] public EventCallback<QnASet> OnEdit { get; set; }
+
+    // QnA-level actions
+    [Parameter] public EventCallback<(QnA QnA, QnASet QnASet)> OnMoveQnAUp { get; set; }
+    [Parameter] public EventCallback<(QnA QnA, QnASet QnASet)> OnMoveQnADown { get; set; }
+    [Parameter] public EventCallback<QnA> OnDeleteQnA { get; set; }
+    [Parameter] public EventCallback<(QnA QnA, int QnASetId)> OnEditQnA { get; set; }
+    [Parameter] public EventCallback<int> OnCreateQnA { get; set; }
+}

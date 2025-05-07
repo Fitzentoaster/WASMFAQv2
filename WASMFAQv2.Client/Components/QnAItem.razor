@@ -1,0 +1,48 @@
+﻿<MudCard>
+    <MudGrid Justify="Justify.SpaceBetween" Class="mb-4">
+        <MudItem xs="2" md="1">
+            <MudButton Color="Color.Tertiary"
+                       Variant="Variant.Filled"
+                       OnClick="@(() => OnMoveUp.InvokeAsync(qna))">
+                <MudIcon Icon="@Icons.Material.Filled.ArrowCircleUp" />
+            </MudButton>
+        </MudItem>
+        <MudItem xs="2" md="1">
+            <MudButton Color="Color.Tertiary"
+                       Variant="Variant.Filled"
+                       OnClick="@(() => OnMoveDown.InvokeAsync(qna))">
+                <MudIcon Icon="@Icons.Material.Filled.ArrowCircleDown" />
+            </MudButton>
+        </MudItem>
+        <MudItem xs="12" sm="4" md="6" lg="8">
+            <MudText Typo="Typo.h5">@qna.Question</MudText>
+            <MudText Markup="true">
+                @((MarkupString)(qna.Answer ?? string.Empty))
+            </MudText>
+        </MudItem>
+        <MudItem xs="2" md="1">
+            <MudButton Color="Color.Error"
+                       Variant="Variant.Filled"
+                       OnClick="@(() => OnDelete.InvokeAsync(qna))">
+                <MudIcon Icon="@Icons.Material.Filled.Delete" />
+            </MudButton>
+        </MudItem>
+        <MudItem xs="2" md="1">
+            <MudButton Color="Color.Success"
+                       Variant="Variant.Filled"
+                       OnClick="@(() => OnEdit.InvokeAsync(qna))">
+                <MudIcon Icon="@Icons.Material.Filled.Edit" />
+            </MudButton>
+        </MudItem>
+    </MudGrid>
+</MudCard>
+<br />
+
+@code {
+    [Parameter] public QnA? qna { get; set; }
+
+    [Parameter] public EventCallback<QnA> OnMoveUp { get; set; }
+    [Parameter] public EventCallback<QnA> OnMoveDown { get; set; }
+    [Parameter] public EventCallback<QnA> OnDelete { get; set; }
+    [Parameter] public EventCallback<QnA> OnEdit { get; set; }
+}

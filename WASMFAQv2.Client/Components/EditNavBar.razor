@@ -1,0 +1,28 @@
+﻿<MudAppBar Elevation="4" Fixed="true">
+    <MudGrid Justify="Justify.Center">
+        <MudButton Color="Color.Success"
+                   Variant="Variant.Filled"
+                   OnClick="@OnCreateQnASet">
+            <MudIcon Icon="@Icons.Material.Filled.Add" />
+            @AppStrings.NewQnASet
+        </MudButton>
+
+        <MudButton Color="Color.Primary"
+                   Variant="Variant.Filled"
+                   Href="/">
+            <MudIcon Icon="@Icons.Material.Filled.Home" />
+            @AppStrings.Home
+        </MudButton>
+
+        <MudButton Color="Color.Transparent"
+                   Variant="Variant.Filled"
+                   OnClick="@OnToggleTheme">
+            <MudIcon Icon="@Icons.Material.Filled.Brightness4" />
+        </MudButton>
+    </MudGrid>
+</MudAppBar>
+
+@code {
+    [Parameter] public EventCallback OnCreateQnASet { get; set; }
+    [Parameter] public EventCallback OnToggleTheme { get; set; }
+}

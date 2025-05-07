@@ -21,146 +21,25 @@ else
 	<MudThemeProvider IsDarkMode="@isDarkMode" />
 
 	<MudLayout>
-		<MudAppBar Elevation="4" Fixed="true">
-			<MudGrid Justify="Justify.Center">
-				<MudButton Color="Color.Success" 
-				Variant="Variant.Filled" 
-				@onclick="CreateQnASetAsync">
-					<MudIcon Icon="@Icons.Material.Filled.Add" />
-					@AppStrings.NewQnASet
-				</MudButton>
-				<MudButton Color="Color.Primary" 
-				Variant="Variant.Filled" 
-				Href="/">
-					<MudIcon Icon="@Icons.Material.Filled.Home" />
-					@AppStrings.Home
-				</MudButton>
-				<MudButton Color="Color.Transparent" Variant="Variant.Filled" OnClick="ToggleTheme">
-					<MudIcon Icon="@Icons.Material.Filled.Brightness4" />
-				</MudButton>
-			</MudGrid>
-		</MudAppBar>
+		<EditNavBar OnCreateQnASet="CreateQnASetAsync"
+                    OnToggleTheme="ToggleTheme" />
 
-		<MudGrid Justify="Justify.Center" Class="mt-16">
-			<MudItem xs="12" sm="6">
-				<MudCard GutterBottom="true">
-					<MudCardContent>
-						<MudText Typo="Typo.h4">@faq.Title</MudText>
-						<MudText Typo="Typo.h6">@faq.Description</MudText>
-						<br />
-						<br />
-						<MudGrid Justify="Justify.Center">
-							<MudButton Color="Color.Success" 
-							Variant="Variant.Filled" 
-							OnClick="@(() => EditFAQAsync(faq))">
-								<MudIcon Icon="@Icons.Material.Filled.Edit" />
-							</MudButton>
-						</MudGrid>
-					</MudCardContent>
-				</MudCard>
-			</MudItem>
-		</MudGrid>
-		<br />
-		<br />
+		<FAQComponent faq="faq" OnEdit="EditFAQAsync" />
 
-		<br />
-		<br />
-		<MudGrid Justify="Justify.Center">
+		
+		<MudGrid Justify="Justify.Center" Class="mt-12">
 			@foreach (var qnaSet in qnaSets.OrderBy(q => q.SortOrder))
 			{
-				<span id="@($"qnaSet-{qnaSet.SortOrder}")">
-				</span>
-				<MudItem xs="12" sm="8">
-					<MudCard>
-						<MudCardHeader Class="pe-0 ps-6">
-							<MudGrid Justify="Justify.FlexStart">
-								<MudButton 
-								Color="Color.Tertiary" 
-								Variant="Variant.Filled" 
-								OnClick="@(() => MoveQnASetUp(qnaSet))">
-									<MudIcon Icon="@Icons.Material.Filled.ArrowCircleUp" />
-								</MudButton>
-								<MudButton Color="Color.Tertiary" 
-								Variant="Variant.Filled" 
-								OnClick="@(() => MoveQnASetDown(qnaSet))">
-									<MudIcon Icon="@Icons.Material.Filled.ArrowCircleDown" />
-								</MudButton>
-							</MudGrid>
-							<MudGrid Justify="Justify.FlexEnd">
-
-								<MudButton Color="Color.Error" 
-								Variant="Variant.Filled" 
-								OnClick="@(() => DeleteQnASetAsync(qnaSet.QnASetId))">
-									<MudIcon Icon="@Icons.Material.Filled.Delete" />
-								</MudButton>
-								<MudButton Color="Color.Success" 
-								Variant="Variant.Filled" 
-								OnClick="@(() => EditQnaSetAsync(qnaSet))">
-									<MudIcon Icon="@Icons.Material.Filled.Edit" />
-								</MudButton>
-							</MudGrid>
-						</MudCardHeader>
-						<MudCardContent>
-							<MudText Label="@AppStrings.Name" Typo="Typo.h4"><u>@qnaSet.Name</u></MudText>
-							<MudText Label="@AppStrings.Description" Typo="Typo.h6">@qnaSet.Description</MudText>
-						</MudCardContent>
-					</MudCard>
-					<MudCard>
-
-						<MudCardContent>
-							@foreach (var qna in (qnaSet.QnAs ?? Enumerable.Empty<QnA>()).OrderBy(q => q.SortOrder))
-							{
-								<MudCard>
-									<MudGrid Justify="Justify.SpaceBetween" Class="mb-4">
-										<MudItem xs="2" md="1">
-											<MudButton Color="Color.Tertiary" 
-											Variant="Variant.Filled" 
-											OnClick="@(() => MoveQnAUp(qna, qnaSet))">
-												<MudIcon Icon="@Icons.Material.Filled.ArrowCircleUp" />
-											</MudButton>
-										</MudItem>
-										<MudItem xs="2" md="1">
-											<MudButton Color="Color.Tertiary" 
-											Variant="Variant.Filled" 
-											OnClick="@(() => MoveQnADown(qna, qnaSet))">
-												<MudIcon Icon="@Icons.Material.Filled.ArrowCircleDown" />
-											</MudButton>
-										</MudItem>
-										<MudItem xs="12" sm="4" md="6" lg="8">
-											<MudText Typo="Typo.h5">@qna.Question</MudText>
-											<MudText Markup="true">
-												@((MarkupString)(qna.Answer ?? string.Empty))
-											</MudText>
-										</MudItem>
-										<MudItem xs="2" md="1">
-											<MudButton Color="Color.Error" 
-											Variant="Variant.Filled" 
-											OnClick="@(() => DeleteQnAAsync(qna.QnaId))">
-												<MudIcon Icon="@Icons.Material.Filled.Delete" />
-											</MudButton>
-										</MudItem>
-										<MudItem xs="2" md="1">
-											<MudButton Color="Color.Success" 
-											Variant="Variant.Filled" 
-											OnClick="@(() => EditQnAAsync(qna, qnaSet.QnASetId))">
-												<MudIcon Icon="@Icons.Material.Filled.Edit" />
-											</MudButton>
-										</MudItem>
-
-									</MudGrid>
-								</MudCard>
-								<br />
-							}
-							<MudGrid Justify="Justify.Center">
-								<MudButton Color="Color.Success" 
-								Variant="Variant.Filled" 
-								OnClick="@(() => CreateQnAAsync(qnaSet.QnASetId))">
-									<MudIcon Icon="@Icons.Material.Filled.Add" />
-								</MudButton>
-							</MudGrid>
-						</MudCardContent>
-					</MudCard>
-				</MudItem>
+				<QnASetItem QnASet="qnaSet"
+							OnMoveUp="MoveQnASetUp"
+							OnMoveDown="MoveQnASetDown"
+							OnDelete="@(set => DeleteQnASetAsync(set.QnASetId))"
+							OnEdit="EditQnaSetAsync"
+							OnMoveQnAUp="@(tuple => MoveQnAUp(tuple.QnA, tuple.QnASet))"
+							OnMoveQnADown="@(tuple => MoveQnADown(tuple.QnA, tuple.QnASet))"
+							OnDeleteQnA="@(q => DeleteQnAAsync(q.QnaId))"
+							OnEditQnA="@(tuple => EditQnAAsync(tuple.QnA, tuple.QnASetId))"
+							OnCreateQnA="CreateQnAAsync" />
 			}
 
 		</MudGrid>
