@@ -59,6 +59,7 @@ else
 	private ILocalStorageService LocalStorageService = null!; 
 	private ISortManager SortManager = null!;
 	private IQnAEditManager QnAEditManager = null!;
+	private IQnASetEditManager QnASetEditManager = null!;
 	private bool isDarkMode;
 
 	// Lifecycle Methods
@@ -70,6 +71,7 @@ else
 			LocalStorageService = ServiceProvider.GetRequiredService<ILocalStorageService>();
 			SortManager = ServiceProvider.GetRequiredService<ISortManager>();
 			QnAEditManager = ServiceProvider.GetRequiredService<IQnAEditManager>();
+			QnASetEditManager = ServiceProvider.GetRequiredService<IQnASetEditManager>();
 			isDarkMode = await LocalStorageService.GetItemAsync<bool>("isDarkMode");
 
 			await FAQApiService.NormalizeQnASetSortOrderAsync();
@@ -93,76 +95,25 @@ else
 		{
 			qnaSet.QnAs = await FAQApiService.GetQuestionsByQnASetIdAsync(qnaSet.QnASetId);
 			qnaSets = qnaSets.OrderBy(q => q.SortOrder).ToList();
-
 		}
 	}
 
 	// QnASet Methods
-	private async Task DeleteQnASetAsync(int qnaSetId)
+	private async Task CreateQnASetAsync()
 	{
-		var options = new DialogOptions { BackgroundClass = "bg-blur" };
-		var dialog = await DialogService.ShowAsync<ConfirmDeleteModal>(AppStrings.ConfirmDelete, options);
-		var result = await dialog.Result;
-
-		if (result is not null && !result.Canceled)
-		{
-			var qnaSet = qnaSets.FirstOrDefault(q => q.QnASetId == qnaSetId);
-
-			await FAQApiService.DeleteQnASetAsync(qnaSetId);
-			await InitializeQnASets();
-			StateHasChanged();
-			if (qnaSet != null && qnaSet.SortOrder > 1)
-			{
-				await ScrollToQnASet(qnaSet.SortOrder - 1);
-			}
-			else
-			{
-				await ScrollToQnASet(0);
-			}
-		}
+		await QnASetEditManager.CreateQnASetAsync(InitializeQnASets, ScrollToQnASet);
 	}
 
 	private async Task EditQnaSetAsync(QnASet qnaSet)
 	{
-		var parameters = new DialogParameters();
-		parameters.Add("qnaSet", qnaSet);
-		var options = new DialogOptions { BackgroundClass = "bg-blur" };
-		var dialog = await DialogService.ShowAsync<QnASetEditModal>(AppStrings.EditQnASet, parameters, options);
-		var result = await dialog.Result;
-		if (result is not null && !result.Canceled)
-		{
-			var updated = result.Data as QnASet;
-			if (updated is not null)
-			{
-				updated.QnASetId = qnaSet.QnASetId;
-				updated.SortOrder = qnaSet.SortOrder;
-
-				await FAQApiService.UpdateQnASetAsync(updated);
-				await InitializeQnASets();
-				StateHasChanged();
-				await ScrollToQnASet(updated.SortOrder);
-			}
-		}
+		await QnASetEditManager.EditQnASetAsync(qnaSet, InitializeQnASets, ScrollToQnASet);
 	}
 
-	private async Task CreateQnASetAsync()
+	private async Task DeleteQnASetAsync(int qnaSetId)
 	{
-		var parameters = new DialogParameters();
-		parameters.Add("QnASet", new QnASet());
-		var options = new DialogOptions { BackgroundClass = "bg-blur" };
-		var dialog = await DialogService.ShowAsync<QnASetModal>(AppStrings.NewQnASet, parameters, options);
-		var result = await dialog.Result;
-		if (result is not null && !result.Canceled && result.Data is QnASet qnaSet)
-		{
-			qnaSet.SortOrder = qnaSets.Count;
-			await FAQApiService.AddQnASetAsync(qnaSet);
-			await FAQApiService.NormalizeQnASetSortOrderAsync();
-			await InitializeQnASets();
-			StateHasChanged();
-			await ScrollToQnASet(qnaSet.SortOrder);
-		}
-
+		await QnASetEditManager.DeleteQnASetAsync(qnaSetId, qnaSets, InitializeQnASets, ScrollToQnASet);
 	}
+
 	
 	// QnA Methods
 	private async Task CreateQnAAsync(int qnaSetId)

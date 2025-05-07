@@ -12,6 +12,7 @@ builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.
 builder.Services.AddScoped<IFAQApiService, FAQApiService>();
 builder.Services.AddScoped<ISortManager, SortManager>();
 builder.Services.AddScoped<IQnAEditManager, QnAEditManager>();
+builder.Services.AddScoped<IQnASetEditManager, QnASetEditManager>();
 
 builder.Services.AddBlazoredLocalStorage();
 
