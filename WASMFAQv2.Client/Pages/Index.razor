@@ -122,6 +122,7 @@ else
 			StateHasChanged(); 
 		}
 	}
+
 	// Theme Methods
 	private async Task ToggleTheme()
 	{
@@ -129,5 +130,4 @@ else
 		await LocalStorageService!.SetItemAsync("isDarkMode", isDarkMode);
 		StateHasChanged();
 	}
-
 }
