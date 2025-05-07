@@ -1,5 +1,6 @@
 ﻿@page "/edit"
 
+@inject IJSRuntime JS
 @inject IServiceProvider ServiceProvider
 @inject NavigationManager NavigationManager
 @inject IDialogService DialogService
@@ -68,6 +69,8 @@ else
 		<MudGrid Justify="Justify.Center">
 			@foreach (var qnaSet in qnaSets.OrderBy(q => q.SortOrder))
 			{
+				<span id="@($"qnaSet-{qnaSet.SortOrder}")">
+			    </span>
 				<MudItem xs="12" sm="8">
 					<MudCard>
 						<MudCardHeader Class="pe-0 ps-6">
@@ -215,9 +218,19 @@ else
 
 		if (result is not null && !result.Canceled)
 		{
+			var qnaSet = qnaSets.FirstOrDefault(q => q.QnASetId == qnaSetId);
+
 			await FAQApiService.DeleteQnASetAsync(qnaSetId);
 			await InitializeQnASets();
 			StateHasChanged();
+			if (qnaSet != null && qnaSet.SortOrder > 1)
+			{
+				await ScrollToQnASet(qnaSet.SortOrder - 1);
+			}
+			else
+			{
+				await ScrollToQnASet(0);
+			}
 		}
 	}
 
@@ -239,6 +252,7 @@ else
 				await FAQApiService.UpdateQnASetAsync(updated);
 				await InitializeQnASets();
 				StateHasChanged();
+				await ScrollToQnASet(updated.SortOrder);
 			}
 		}
 	}
@@ -252,11 +266,12 @@ else
 		var result = await dialog.Result;
 		if (result is not null && !result.Canceled && result.Data is QnASet qnaSet)
 		{
-			qnaSet.SortOrder = qnaSets.Count + 1;
+			qnaSet.SortOrder = qnaSets.Count;
 			await FAQApiService.AddQnASetAsync(qnaSet);
 			await FAQApiService.NormalizeQnASetSortOrderAsync();
 			await InitializeQnASets();
 			StateHasChanged();
+			await ScrollToQnASet(qnaSet.SortOrder);
 		}
 
 	}
@@ -419,6 +434,12 @@ else
 		await FAQApiService.NormalizeQnASortOrderAsync();
 		await InitializeQnASets(); 
 		StateHasChanged();
+	}
+	
+	private async Task ScrollToQnASet(int qnaSetSortOrder)
+	{
+		var elementId = $"qnaSet-{qnaSetSortOrder}";
+		await JS.InvokeVoidAsync("scrollToElement", elementId);
 	}
 
 	// Models
