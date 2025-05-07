@@ -383,6 +383,7 @@ else
 		await FAQApiService.NormalizeQnASetSortOrderAsync();
 		await InitializeQnASets(); 
 		StateHasChanged();
+		await ScrollToQnASet(qnaSet.SortOrder);
 	}
 
 	private async Task MoveQnASetDown(QnASet qnaSet)
@@ -402,6 +403,7 @@ else
 		await FAQApiService.NormalizeQnASetSortOrderAsync();
 		await InitializeQnASets(); 
 		StateHasChanged();
+		await ScrollToQnASet(qnaSet.SortOrder);
 	}
 
 	private async Task MoveQnAUp(QnA qna, QnASet qnaSet)
@@ -422,6 +424,7 @@ else
 		await FAQApiService.NormalizeQnASortOrderAsync();
 		await InitializeQnASets();
 		StateHasChanged();
+		await ScrollToQnASet(qna.SortOrder);
 	}
 
 	private async Task MoveQnADown(QnA qna, QnASet qnaSet)
@@ -443,6 +446,7 @@ else
 		await FAQApiService.NormalizeQnASortOrderAsync();
 		await InitializeQnASets(); 
 		StateHasChanged();
+		await ScrollToQnASet(qna.SortOrder);
 	}
 	
 	private async Task ScrollToQnASet(int qnaSetSortOrder)
